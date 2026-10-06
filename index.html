@@ -22,7 +22,7 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 .fields{display:grid;grid-template-columns:76px 1fr 1fr;gap:8px;margin-top:11px}.field label{display:block;font-size:10px;color:var(--muted);margin:0 0 4px 3px}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:11px;padding:9px;background:#fafbfc;min-width:0}
 .itemfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;font-size:12px}.subtotal{font-weight:800}.pricehint{color:var(--muted)}.pricehint.cheaper{color:var(--accent2)}.pricehint.expensive{color:var(--danger)}
 .empty{text-align:center;color:var(--muted);padding:34px 12px;background:var(--card);border-radius:18px;border:1px dashed var(--line)}
-.panel{display:none}.panel.active{display:block}.summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sumcard,.history{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.sumcard small{color:var(--muted)}.sumcard b{display:block;font-size:22px;margin-top:4px}
+.panel{display:none}.panel.active{display:block}.summarygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.sumcard,.history{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.sumcard small{color:var(--muted)}.sumcard b{display:block;font-size:22px;margin-top:4px}
 .finish{width:100%;border:0;border-radius:15px;background:var(--accent);color:#fff;padding:15px;font-weight:800;margin-top:12px}.note{font-size:12px;color:var(--muted);margin:12px 2px}
 .history{margin-bottom:10px}.historytop{display:flex;justify-content:space-between;gap:10px}.history h3{margin:0;font-size:15px}.history .date{font-size:12px;color:var(--muted)}.history .htotal{font-weight:850}.historydetails{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.7}
 .nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),720px);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:7px;background:rgba(17,24,39,.96);border-radius:20px;box-shadow:0 15px 35px rgba(0,0,0,.2);z-index:20}
@@ -44,6 +44,9 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 .list-switch{display:grid;grid-template-columns:1fr 1fr;gap:7px;background:#e9ecef;padding:5px;border-radius:17px;margin-bottom:12px}
 .list-switch-btn{border:0;background:transparent;color:var(--muted);padding:12px 8px;border-radius:13px;font-weight:800}
 .list-switch-btn.active{background:var(--card);color:var(--text);box-shadow:0 3px 12px rgba(17,24,39,.08)}
+
+.purchased-total{display:flex;align-items:center;justify-content:space-between;margin:8px 0 14px;padding:16px;border-radius:18px;background:var(--card);box-shadow:var(--shadow);border:1px solid var(--line)}
+.purchased-total small{font-weight:750;color:var(--muted);font-size:13px}.purchased-total strong{font-size:25px;letter-spacing:-.5px}
 </style>
 </head>
 <body>
@@ -58,6 +61,7 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
     <div class="list-switch">
       <button type="button" class="list-switch-btn active" data-list="🛒 Mercado">🛒 Mercado</button>
       <button type="button" class="list-switch-btn" data-list="🥬 Verdureira">🥬 Verdureira</button>
+<button type="button" class="list-switch-btn" data-list="✅ Comprados">✅ Comprados</button>
     </div>
     <div class="searchbox"><span class="searchicon">🔎</span><input id="searchItem" type="search" placeholder="Pesquisar item na lista…" autocomplete="off"><button id="clearSearch" class="clearsearch" type="button">✕</button></div>
     <form id="addForm" class="add"><select id="listType" class="input" style="display:none;grid-column:1/-1"><option>🛒 Mercado</option><option>🥬 Verdureira</option></select><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
@@ -119,7 +123,7 @@ function keyName(name){return norm(name).replace(/[^a-z0-9]+/g,"_").replace(/^_|
 const money=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const esc=s=>{const d=document.createElement("div");d.textContent=s||"";return d.innerHTML};
 function knownPrice(item){const p=Number(item.preco)||0;if(p>0)return p;const ph=priceHistory[keyName(item.nome)];return Number(ph?.ultimoPreco)||0}
-function totals(){let total=0,spent=0,saved=0,bought=0;for(const i of Object.values(products)){const q=Number(i.quantidade)||1,p=knownPrice(i),sub=q*p;total+=sub;if(i.comprado){spent+=sub;bought++}else saved+=sub}return{total,spent,saved,bought,count:Object.keys(products).length}}
+function totals(){let total=0,spent=0,saved=0,bought=0;for(const i of Object.values(products)){const q=Number(i.quantidade)||1,p=knownPrice(i),sub=q*p;total+=sub;if(i.comprado){spent+=sub;bought+=q}else saved+=sub}return{total,spent,saved,bought,count:Object.keys(products).length}}
 function previousPrice(item){return Number(priceHistory[keyName(item.nome)]?.ultimoPreco)||0}
 
 onValue(listRef,s=>{products=s.val()||{};document.querySelector("#sync").textContent="● Sincronizado";document.querySelector("#sync").classList.remove("off");render() },()=>{document.querySelector("#sync").textContent="Sem conexão";document.querySelector("#sync").classList.add("off")});
@@ -166,11 +170,20 @@ function render(){
    const tipo=listTypes.includes(i.tipoLista)?i.tipoLista:"🛒 Mercado"; grouped[tipo].push([id,i]);
  });
  const root=document.querySelector("#list");root.innerHTML="";
+ const renderEntries = activeList==="✅ Comprados"
+   ? Object.entries(products).filter(([id,i])=>i.comprado && (!searchTerm || norm(i.nome).includes(norm(searchTerm))))
+       .sort((a,b)=>(a[1].criadoEm||0)-(b[1].criadoEm||0))
+   : grouped[activeList];
+
  for(const tipo of [activeList]){
    const sec=document.createElement("section");sec.className="category";
-   sec.innerHTML=`<div class="cathead"><h2>${tipo}</h2><span>${grouped[tipo].length} item(ns)</span></div>`;
-   if(!grouped[tipo].length){const e=document.createElement("div");e.className="empty";e.textContent=searchTerm?"Nenhum item encontrado.":(tipo==="🥬 Verdureira"?"Nenhum item na lista da verdureira.":"Nenhum item na lista do mercado.");sec.appendChild(e)}
-   grouped[tipo].forEach(([id,i])=>{
+   const entries=renderEntries||[];
+   let purchasedTotal=0;
+   if(tipo==="✅ Comprados") entries.forEach(([id,i])=>purchasedTotal+=(Number(i.quantidade)||1)*(Number(i.preco)||0));
+   const purchasedQty=tipo==="✅ Comprados"?entries.reduce((acc,[id,i])=>acc+(Number(i.quantidade)||1),0):entries.length;
+   sec.innerHTML=`<div class="cathead"><h2>${tipo}</h2><span>${purchasedQty} item(ns)</span></div>${tipo==="✅ Comprados"?`<div class="purchased-total"><small>Total comprado</small><strong>${money(purchasedTotal)}</strong></div>`:""}`;
+   if(!entries.length){const e=document.createElement("div");e.className="empty";e.textContent=searchTerm?"Nenhum item encontrado.":(tipo==="✅ Comprados"?"Nenhum item marcado como comprado.":tipo==="🥬 Verdureira"?"Nenhum item na lista da verdureira.":"Nenhum item na lista do mercado.");sec.appendChild(e)}
+   entries.forEach(([id,i])=>{
      const q=Number(i.quantidade)||1,p=Number(i.preco)||0,prev=previousPrice(i),sub=q*p;let hint="Sem preço anterior",cls="";
      if(p>0&&prev>0){const diff=p-prev;if(Math.abs(diff)<.005)hint="Mesmo preço da última compra";else if(diff<0){hint=`↓ ${money(Math.abs(diff))} mais barato`;cls="cheaper"}else{hint=`↑ ${money(diff)} mais caro`;cls="expensive"}}
      const el=document.createElement("article");el.className="item"+(i.comprado?" done":"");el.innerHTML=`
@@ -212,7 +225,7 @@ const listTypeSelect=document.querySelector("#listType");
 document.querySelectorAll(".list-switch-btn").forEach(btn=>btn.addEventListener("click",()=>{
   activeList=btn.dataset.list;
   document.querySelectorAll(".list-switch-btn").forEach(b=>b.classList.toggle("active",b===btn));
-  listTypeSelect.value=activeList;
+  if(activeList!=="✅ Comprados") listTypeSelect.value=activeList;
   render();
 }));
 listTypeSelect.value=activeList;
