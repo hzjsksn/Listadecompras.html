@@ -47,6 +47,9 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 
 .purchased-total{display:flex;align-items:center;justify-content:space-between;margin:8px 0 14px;padding:16px;border-radius:18px;background:var(--card);box-shadow:var(--shadow);border:1px solid var(--line)}
 .purchased-total small{font-weight:750;color:var(--muted);font-size:13px}.purchased-total strong{font-size:25px;letter-spacing:-.5px}
+
+.current-purchase-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:16px 17px;border-radius:20px;background:#111827;color:#fff;box-shadow:0 8px 25px rgba(17,24,39,.14)}
+.current-purchase-card small{display:block;font-size:13px;font-weight:800}.current-purchase-note{margin-top:3px;font-size:10px;opacity:.68}.current-purchase-card strong{font-size:25px;white-space:nowrap;letter-spacing:-.6px}
 </style>
 </head>
 <body>
@@ -57,6 +60,10 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
     <div class="hero">
       <div class="eyebrow">Total estimado / informado</div><div id="heroTotal" class="money">R$ 0,00</div>
       <div class="stats"><div class="stat"><b id="heroBought">0</b><span>comprados</span></div><div class="stat"><b id="heroSaved">R$ 0,00</b><span>não gastos</span></div><div class="stat"><b id="heroItems">0</b><span>itens</span></div></div>
+    </div>
+    <div class="current-purchase-card">
+      <div><small>Total que estou comprando</small><div class="current-purchase-note">Itens marcados como comprados</div></div>
+      <strong id="currentPurchaseTotal">R$ 0,00</strong>
     </div>
     <div class="list-switch">
       <button type="button" class="list-switch-btn active" data-list="🛒 Mercado">🛒 Mercado</button>
@@ -164,6 +171,8 @@ function renderMarkets(){
 document.querySelector("#addForm").addEventListener("submit",async e=>{e.preventDefault();const inp=document.querySelector("#product"),q=document.querySelector("#qty");const nome=inp.value.trim();if(!nome)return;const quantidade=Math.max(1,Number(q.value)||1);const tipoLista=document.querySelector("#listType").value;await set(push(listRef),{nome,quantidade,preco:0,comprado:false,tipoLista,criadoEm:Date.now()});inp.value="";q.value=1;inp.focus()});
 
 function render(){
+ const currentPurchaseEl=document.querySelector("#currentPurchaseTotal");
+ if(currentPurchaseEl)currentPurchaseEl.textContent=money(totals().spent);
  const grouped={"🛒 Mercado":[],"🥬 Verdureira":[]};
  Object.entries(products).sort((a,b)=>(a[1].criadoEm||0)-(b[1].criadoEm||0)).forEach(([id,i])=>{
    if(searchTerm && !norm(i.nome).includes(norm(searchTerm))) return;
