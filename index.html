@@ -25,9 +25,21 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 .panel{display:none}.panel.active{display:block}.summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sumcard,.history{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.sumcard small{color:var(--muted)}.sumcard b{display:block;font-size:22px;margin-top:4px}
 .finish{width:100%;border:0;border-radius:15px;background:var(--accent);color:#fff;padding:15px;font-weight:800;margin-top:12px}.note{font-size:12px;color:var(--muted);margin:12px 2px}
 .history{margin-bottom:10px}.historytop{display:flex;justify-content:space-between;gap:10px}.history h3{margin:0;font-size:15px}.history .date{font-size:12px;color:var(--muted)}.history .htotal{font-weight:850}.historydetails{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.7}
-.nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),720px);display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:7px;background:rgba(17,24,39,.96);border-radius:20px;box-shadow:0 15px 35px rgba(0,0,0,.2);z-index:20}
+.nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),720px);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:7px;background:rgba(17,24,39,.96);border-radius:20px;box-shadow:0 15px 35px rgba(0,0,0,.2);z-index:20}
 .nav button{border:0;background:transparent;color:#aeb6c4;border-radius:14px;padding:10px 6px;font-size:12px}.nav button.active{background:#fff;color:#111827;font-weight:800}
 @media(max-width:480px){.app{padding:12px 12px 96px}.hero{padding:18px}.hero .money{font-size:31px}.stats{gap:6px}.stat{padding:8px}.fields{grid-template-columns:70px 1fr}.fields .categoryfield{grid-column:1/-1}.summarygrid{grid-template-columns:1fr 1fr}.add{grid-template-columns:1fr 68px 46px}}
+
+.marketbox{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;margin:14px 0;box-shadow:var(--shadow)}
+.marketbox h2{font-size:18px;margin:0 0 5px}.marketbox p{font-size:12px;color:var(--muted);margin:0 0 12px}
+.marketadd{display:grid;grid-template-columns:1fr auto;gap:8px}.marketadd button{border:0;border-radius:12px;background:#111827;color:white;padding:0 16px;font-weight:800}
+.marketrow{display:grid;grid-template-columns:1fr 105px 42px;gap:8px;align-items:center;margin-top:8px}.marketrow .mname{font-size:13px;font-weight:700}
+.marketrow input{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fafbfc}
+.marketrow button{border:0;background:#fff0f0;color:var(--danger);height:38px;border-radius:10px}
+.compare-result{margin-top:14px;padding:13px;border-radius:14px;background:#edf9f3;font-size:13px}.compare-result b{color:var(--accent2)}
+.productcompare{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:13px;margin:10px 0}.productcompare h3{font-size:14px;margin:0 0 8px}.best{color:var(--accent2);font-weight:800}
+
+.searchbox{position:relative;margin:0 0 14px}.searchbox input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 44px 14px 42px;outline:none;box-shadow:var(--shadow)}
+.searchbox input:focus{border-color:var(--accent)}.searchicon{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:17px}.clearsearch{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font-size:20px;display:none}
 </style>
 </head>
 <body>
@@ -39,7 +51,8 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
       <div class="eyebrow">Total estimado / informado</div><div id="heroTotal" class="money">R$ 0,00</div>
       <div class="stats"><div class="stat"><b id="heroBought">0</b><span>comprados</span></div><div class="stat"><b id="heroSaved">R$ 0,00</b><span>não gastos</span></div><div class="stat"><b id="heroItems">0</b><span>itens</span></div></div>
     </div>
-    <form id="addForm" class="add"><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
+    <div class="searchbox"><span class="searchicon">🔎</span><input id="searchItem" type="search" placeholder="Pesquisar item na lista…" autocomplete="off"><button id="clearSearch" class="clearsearch" type="button">✕</button></div>
+    <form id="addForm" class="add"><select id="listType" class="input" style="grid-column:1/-1"><option>🛒 Mercado</option><option>🥬 Verdureira</option></select><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
     <div id="list"></div>
   </section>
 
@@ -55,12 +68,23 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
   </section>
 
   <section id="historicoPanel" class="panel"><div id="historyList"></div></section>
+
+  <section id="compararPanel" class="panel">
+    <div class="marketbox">
+      <h2>Comparar mercados 🏪</h2>
+      <p>Cadastre os mercados e informe o preço de cada produto em cada um.</p>
+      <form id="marketForm" class="marketadd"><input id="marketName" class="input" placeholder="Ex.: Mercado A" required><button>Adicionar</button></form>
+      <div id="markets"></div>
+    </div>
+    <div id="marketComparison"></div>
+  </section>
 </main>
 
 <nav class="nav">
   <button class="active" data-tab="lista">🛒<br>Lista</button>
   <button data-tab="resumo">📊<br>Resumo</button>
   <button data-tab="historico">🕘<br>Histórico</button>
+  <button data-tab="comparar">🏪<br>Mercados</button>
 </nav>
 
 <script type="module">
@@ -77,24 +101,12 @@ const firebaseConfig={
  appId:"1:944177336346:web:e51d799e571b86a85041a3"
 };
 const app=initializeApp(firebaseConfig), db=getDatabase(app);
-const listRef=ref(db,"listaCompras"), histRef=ref(db,"historicoCompras"), pricesRef=ref(db,"precosProdutos");
-let products={}, history={}, priceHistory={};
+const listRef=ref(db,"listaCompras"), histRef=ref(db,"historicoCompras"), pricesRef=ref(db,"precosProdutos"), marketsRef=ref(db,"mercados"), marketPricesRef=ref(db,"precosPorMercado");
+let products={}, history={}, priceHistory={}, markets={}, marketPrices={}, searchTerm="";
 
-const categories=[
- ["🥤 Bebidas",["coca","pepsi","guarana","refrigerante","agua","suco","cerveja","energetico","cha","cafe bebida"]],
- ["🍎 Frutas",["banana","maca","maçã","laranja","uva","mamao","mamão","melancia","melao","melão","morango","abacaxi","pera","kiwi","manga","limao","limão","abacate"]],
- ["🥗 Saladas e verduras",["alface","rucula","rúcula","couve","repolho","tomate","pepino","cenoura","beterraba","brocolis","brócolis","cebola","pimentao","pimentão","batata","mandioca"]],
- ["🥩 Carnes",["carne","frango","linguica","linguiça","bife","costela","porco","suino","suíno","peixe","file","filé","patinho","acém","acem","picanha","hamburguer","hambúrguer"]],
- ["🥛 Laticínios",["leite","queijo","iogurte","manteiga","requeijao","requeijão","creme de leite","nata"]],
- ["🧴 Higiene",["shampoo","condicionador","sabonete","desodorante","pasta de dente","creme dental","escova de dente","papel higienico","papel higiênico","fio dental","absorvente"]],
- ["🧹 Produtos de limpeza",["detergente","sabao","sabão","amaciante","agua sanitaria","água sanitária","desinfetante","limpa vidro","limpa-vidro","esponja","multiuso","alvejante","saco de lixo"]],
- ["🍞 Padaria",["pao","pão","bolo","torrada","bisnaguinha","croissant"]],
- ["❄️ Congelados",["congelado","pizza","lasanha","nuggets","sorvete"]],
- ["🛒 Mercearia",["arroz","feijao","feijão","macarrao","macarrão","farinha","acucar","açúcar","sal","oleo","óleo","azeite","molho","biscoito","bolacha","cereal","aveia","milho","ervilha"]]
-];
-const categoryNames=[...categories.map(x=>x[0]),"📦 Outros"];
+const listTypes=["🛒 Mercado","🥬 Verdureira"];
 const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-function autoCategory(name){const n=norm(name);for(const [cat,words] of categories)if(words.some(w=>n.includes(norm(w))))return cat;return "📦 Outros"}
+function autoCategory(name){return "🛒 Mercado"}
 function keyName(name){return norm(name).replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"").slice(0,80)||"produto"}
 const money=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const esc=s=>{const d=document.createElement("div");d.textContent=s||"";return d.innerHTML};
@@ -106,37 +118,74 @@ onValue(listRef,s=>{products=s.val()||{};document.querySelector("#sync").textCon
 onValue(histRef,s=>{history=s.val()||{};renderHistory()});
 onValue(pricesRef,s=>{priceHistory=s.val()||{};render()});
 
-document.querySelector("#addForm").addEventListener("submit",async e=>{e.preventDefault();const inp=document.querySelector("#product"),q=document.querySelector("#qty");const nome=inp.value.trim();if(!nome)return;const quantidade=Math.max(1,Number(q.value)||1);await set(push(listRef),{nome,quantidade,preco:0,comprado:false,categoria:autoCategory(nome),criadoEm:Date.now()});inp.value="";q.value=1;inp.focus()});
+
+onValue(marketsRef,s=>{markets=s.val()||{};renderMarkets()});
+onValue(marketPricesRef,s=>{marketPrices=s.val()||{};renderMarkets()});
+
+document.querySelector("#marketForm").addEventListener("submit",async e=>{
+ e.preventDefault();const inp=document.querySelector("#marketName"),nome=inp.value.trim();if(!nome)return;
+ await set(push(marketsRef),{nome,criadoEm:Date.now()});inp.value="";
+});
+
+function renderMarkets(){
+ const root=document.querySelector("#markets"),comp=document.querySelector("#marketComparison");
+ if(!root||!comp)return; root.innerHTML=""; comp.innerHTML="";
+ const ms=Object.entries(markets);
+ if(!ms.length){root.innerHTML='<div class="empty" style="margin-top:10px">Adicione pelo menos um mercado para comparar.</div>';return}
+ ms.forEach(([mid,m])=>{const row=document.createElement("div");row.className="marketrow";row.style.gridTemplateColumns="1fr 42px";row.innerHTML=`<div class="mname">🏪 ${esc(m.nome)}</div><button>✕</button>`;row.querySelector("button").onclick=()=>{if(confirm("Excluir "+m.nome+"?"))remove(ref(db,"mercados/"+mid))};root.appendChild(row)});
+ const current=Object.entries(products);
+ if(!current.length){comp.innerHTML='<div class="empty">Adicione produtos à lista para comparar os preços.</div>';return}
+ let totals={};ms.forEach(([mid])=>totals[mid]=0);
+ current.forEach(([pid,item])=>{
+   const card=document.createElement("div");card.className="productcompare";
+   let vals=ms.map(([mid,m])=>({mid,nome:m.nome,preco:Number(marketPrices[pid]?.[mid])||0}));
+   const positive=vals.filter(x=>x.preco>0), min=positive.length?Math.min(...positive.map(x=>x.preco)):0;
+   card.innerHTML=`<h3>${esc(item.nome)} <span style="color:var(--muted);font-weight:500">× ${Number(item.quantidade)||1}</span></h3>`+
+     vals.map(v=>`<div class="marketrow"><div class="mname ${min&&v.preco===min?"best":""}">${esc(v.nome)}${min&&v.preco===min?" • mais barato":""}</div><input data-mid="${v.mid}" type="number" min="0" step=".01" inputmode="decimal" placeholder="R$ 0,00" value="${v.preco||""}"><span></span></div>`).join("");
+   card.querySelectorAll("input").forEach(inp=>inp.addEventListener("change",e=>set(ref(db,`precosPorMercado/${pid}/${e.target.dataset.mid}`),Math.max(0,Number(e.target.value)||0))));
+   comp.appendChild(card);
+   vals.forEach(v=>{if(v.preco>0)totals[v.mid]+=v.preco*(Number(item.quantidade)||1)});
+ });
+ const valid=ms.map(([mid,m])=>({mid,nome:m.nome,total:totals[mid]})).filter(x=>x.total>0);
+ if(valid.length){const best=Math.min(...valid.map(x=>x.total));const box=document.createElement("div");box.className="marketbox";box.innerHTML='<h2>Total por mercado</h2>'+valid.sort((a,b)=>a.total-b.total).map(x=>`<div class="itemfoot"><span class="${x.total===best?"best":""}">${esc(x.nome)}${x.total===best?" • melhor total":""}</span><b>${money(x.total)}</b></div>`).join("");comp.prepend(box)}
+}
+document.querySelector("#addForm").addEventListener("submit",async e=>{e.preventDefault();const inp=document.querySelector("#product"),q=document.querySelector("#qty");const nome=inp.value.trim();if(!nome)return;const quantidade=Math.max(1,Number(q.value)||1);const tipoLista=document.querySelector("#listType").value;await set(push(listRef),{nome,quantidade,preco:0,comprado:false,tipoLista,criadoEm:Date.now()});inp.value="";q.value=1;inp.focus()});
 
 function render(){
- const grouped={};categoryNames.forEach(c=>grouped[c]=[]);
- Object.entries(products).sort((a,b)=>(a[1].criadoEm||0)-(b[1].criadoEm||0)).forEach(([id,i])=>{const c=categoryNames.includes(i.categoria)?i.categoria:autoCategory(i.nome);(grouped[c]||grouped["📦 Outros"]).push([id,i])});
+ const grouped={"🛒 Mercado":[],"🥬 Verdureira":[]};
+ Object.entries(products).sort((a,b)=>(a[1].criadoEm||0)-(b[1].criadoEm||0)).forEach(([id,i])=>{
+   if(searchTerm && !norm(i.nome).includes(norm(searchTerm))) return;
+   const tipo=listTypes.includes(i.tipoLista)?i.tipoLista:"🛒 Mercado"; grouped[tipo].push([id,i]);
+ });
  const root=document.querySelector("#list");root.innerHTML="";
- if(!Object.keys(products).length)root.innerHTML='<div class="empty">Sua lista está vazia.<br>Adicione o primeiro produto acima.</div>';
- for(const cat of categoryNames){if(!grouped[cat]?.length)continue;const sec=document.createElement("section");sec.className="category";sec.innerHTML=`<div class="cathead"><h2>${cat}</h2><span>${grouped[cat].length} item(ns)</span></div>`;
-  grouped[cat].forEach(([id,i])=>{const q=Number(i.quantidade)||1,p=Number(i.preco)||0,prev=previousPrice(i),sub=q*p;let hint="Sem preço anterior",cls="";
-   if(p>0&&prev>0){const diff=p-prev;if(Math.abs(diff)<.005)hint="Mesmo preço da última compra";else if(diff<0){hint=`↓ ${money(Math.abs(diff))} mais barato`;cls="cheaper"}else{hint=`↑ ${money(diff)} mais caro`;cls="expensive"}}
-   const el=document.createElement("article");el.className="item"+(i.comprado?" done":"");el.innerHTML=`
-    <div class="itemtop"><input class="check" type="checkbox" ${i.comprado?"checked":""} aria-label="Comprado"><div class="name ${i.comprado?"done":""}">${esc(i.nome)}</div><button class="trash" type="button" aria-label="Excluir">✕</button></div>
-    <div class="fields"><div class="field"><label>Qtd.</label><input class="qtyedit" type="number" min="1" step="1" value="${q}"></div><div class="field"><label>Preço unitário</label><input class="priceedit" type="number" min="0" step=".01" inputmode="decimal" placeholder="R$ 0,00" value="${p||""}"></div><div class="field categoryfield"><label>Categoria</label><select class="catedit">${categoryNames.map(c=>`<option ${c===(i.categoria||autoCategory(i.nome))?"selected":""}>${c}</option>`).join("")}</select></div></div>
-    <div class="itemfoot"><span class="pricehint ${cls}">${hint}</span><span class="subtotal">${money(sub)}</span></div>`;
-   el.querySelector(".check").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{comprado:e.target.checked}));
-   el.querySelector(".trash").addEventListener("click",()=>{if(confirm("Excluir "+i.nome+"?"))remove(ref(db,"listaCompras/"+id))});
-   el.querySelector(".qtyedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{quantidade:Math.max(1,Number(e.target.value)||1)}));
-   el.querySelector(".priceedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{preco:Math.max(0,Number(e.target.value)||0)}));
-   el.querySelector(".catedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{categoria:e.target.value,categoriaManual:true}));
-   sec.appendChild(el);
-  });root.appendChild(sec);
+ for(const tipo of listTypes){
+   const sec=document.createElement("section");sec.className="category";
+   sec.innerHTML=`<div class="cathead"><h2>${tipo}</h2><span>${grouped[tipo].length} item(ns)</span></div>`;
+   if(!grouped[tipo].length){const e=document.createElement("div");e.className="empty";e.textContent=tipo==="🥬 Verdureira"?"Nenhum item na lista da verdureira.":"Nenhum item na lista do mercado.";sec.appendChild(e)}
+   grouped[tipo].forEach(([id,i])=>{
+     const q=Number(i.quantidade)||1,p=Number(i.preco)||0,prev=previousPrice(i),sub=q*p;let hint="Sem preço anterior",cls="";
+     if(p>0&&prev>0){const diff=p-prev;if(Math.abs(diff)<.005)hint="Mesmo preço da última compra";else if(diff<0){hint=`↓ ${money(Math.abs(diff))} mais barato`;cls="cheaper"}else{hint=`↑ ${money(diff)} mais caro`;cls="expensive"}}
+     const el=document.createElement("article");el.className="item"+(i.comprado?" done":"");el.innerHTML=`
+      <div class="itemtop"><input class="check" type="checkbox" ${i.comprado?"checked":""}><div class="name ${i.comprado?"done":""}">${esc(i.nome)}</div><button class="trash" type="button">✕</button></div>
+      <div class="fields"><div class="field"><label>Qtd.</label><input class="qtyedit" type="number" min="1" step="1" value="${q}"></div><div class="field"><label>Preço unitário</label><input class="priceedit" type="number" min="0" step=".01" inputmode="decimal" placeholder="R$ 0,00" value="${p||""}"></div><div class="field categoryfield"><label>Lista</label><select class="listedit">${listTypes.map(c=>`<option ${c===(i.tipoLista||"🛒 Mercado")?"selected":""}>${c}</option>`).join("")}</select></div></div>
+      <div class="itemfoot"><span class="pricehint ${cls}">${hint}</span><span class="subtotal">${money(sub)}</span></div>`;
+     el.querySelector(".check").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{comprado:e.target.checked}));
+     el.querySelector(".trash").addEventListener("click",()=>{if(confirm("Excluir "+i.nome+"?"))remove(ref(db,"listaCompras/"+id))});
+     el.querySelector(".qtyedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{quantidade:Math.max(1,Number(e.target.value)||1)}));
+     el.querySelector(".priceedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{preco:Math.max(0,Number(e.target.value)||0)}));
+     el.querySelector(".listedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{tipoLista:e.target.value}));
+     sec.appendChild(el);
+   }); root.appendChild(sec);
  }
  const t=totals();document.querySelector("#heroTotal").textContent=money(t.total);document.querySelector("#heroBought").textContent=t.bought;document.querySelector("#heroSaved").textContent=money(t.saved);document.querySelector("#heroItems").textContent=t.count;
- document.querySelector("#sTotal").textContent=money(t.total);document.querySelector("#sSpent").textContent=money(t.spent);document.querySelector("#sSaved").textContent=money(t.saved);document.querySelector("#sCount").textContent=`${t.bought}/${t.count}`;
+ document.querySelector("#sTotal").textContent=money(t.total);document.querySelector("#sSpent").textContent=money(t.spent);document.querySelector("#sSaved").textContent=money(t.saved);document.querySelector("#sCount").textContent=`${t.bought}/${t.count}`;renderMarkets();
 }
 
 document.querySelector("#finish").addEventListener("click",async()=>{
  const entries=Object.entries(products);if(!entries.length)return alert("A lista está vazia.");
  if(!confirm("Finalizar esta compra e salvar no histórico?"))return;
  const t=totals(), now=Date.now(), items={};
- for(const [id,i] of entries){const q=Number(i.quantidade)||1,p=knownPrice(i);items[id]={nome:i.nome,quantidade:q,preco:p,comprado:!!i.comprado,categoria:i.categoria||autoCategory(i.nome),subtotal:q*p};
+ for(const [id,i] of entries){const q=Number(i.quantidade)||1,p=knownPrice(i);items[id]={nome:i.nome,quantidade:q,preco:p,comprado:!!i.comprado,tipoLista:i.tipoLista||"🛒 Mercado",subtotal:q*p};
   if(i.comprado&&p>0){const k=keyName(i.nome),old=priceHistory[k]||{};await update(ref(db,"precosProdutos/"+k),{nome:i.nome,ultimoPreco:p,precoAnterior:Number(old.ultimoPreco)||0,atualizadoEm:now})}
  }
  await set(push(histRef),{data:now,totalLista:t.total,totalGasto:t.spent,economizado:t.saved,itens:items});
@@ -148,6 +197,11 @@ function renderHistory(){
  if(!rows.length){root.innerHTML='<div class="empty">Nenhuma compra finalizada ainda.</div>';return}
  rows.forEach(([id,h])=>{const items=Object.values(h.itens||{}),bought=items.filter(i=>i.comprado);const d=new Date(h.data||Date.now()).toLocaleString("pt-BR",{dateStyle:"medium",timeStyle:"short"});const el=document.createElement("article");el.className="history";el.innerHTML=`<div class="historytop"><div><h3>Compra</h3><div class="date">${d}</div></div><div class="htotal">${money(h.totalGasto)}</div></div><div class="historydetails">${bought.length} comprado(s) • ${items.length-bought.length} não comprado(s) • Não gasto: ${money(h.economizado)}<br>${items.map(i=>`${i.comprado?"✓":"○"} ${esc(i.nome)} × ${i.quantidade} — ${money(i.subtotal)}`).join("<br>")}</div>`;root.appendChild(el)})
 }
+
+
+const searchInput=document.querySelector("#searchItem"),clearSearch=document.querySelector("#clearSearch");
+searchInput.addEventListener("input",e=>{searchTerm=e.target.value.trim();clearSearch.style.display=searchTerm?"block":"none";render()});
+clearSearch.addEventListener("click",()=>{searchInput.value="";searchTerm="";clearSearch.style.display="none";render();searchInput.focus()});
 
 document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));document.querySelector("#"+b.dataset.tab+"Panel").classList.add("active")}));
 </script>
