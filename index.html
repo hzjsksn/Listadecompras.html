@@ -40,6 +40,10 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 
 .searchbox{position:relative;margin:0 0 14px}.searchbox input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 44px 14px 42px;outline:none;box-shadow:var(--shadow)}
 .searchbox input:focus{border-color:var(--accent)}.searchicon{position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:17px}.clearsearch{position:absolute;right:10px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font-size:20px;display:none}
+
+.list-switch{display:grid;grid-template-columns:1fr 1fr;gap:7px;background:#e9ecef;padding:5px;border-radius:17px;margin-bottom:12px}
+.list-switch-btn{border:0;background:transparent;color:var(--muted);padding:12px 8px;border-radius:13px;font-weight:800}
+.list-switch-btn.active{background:var(--card);color:var(--text);box-shadow:0 3px 12px rgba(17,24,39,.08)}
 </style>
 </head>
 <body>
@@ -51,8 +55,12 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
       <div class="eyebrow">Total estimado / informado</div><div id="heroTotal" class="money">R$ 0,00</div>
       <div class="stats"><div class="stat"><b id="heroBought">0</b><span>comprados</span></div><div class="stat"><b id="heroSaved">R$ 0,00</b><span>não gastos</span></div><div class="stat"><b id="heroItems">0</b><span>itens</span></div></div>
     </div>
+    <div class="list-switch">
+      <button type="button" class="list-switch-btn active" data-list="🛒 Mercado">🛒 Mercado</button>
+      <button type="button" class="list-switch-btn" data-list="🥬 Verdureira">🥬 Verdureira</button>
+    </div>
     <div class="searchbox"><span class="searchicon">🔎</span><input id="searchItem" type="search" placeholder="Pesquisar item na lista…" autocomplete="off"><button id="clearSearch" class="clearsearch" type="button">✕</button></div>
-    <form id="addForm" class="add"><select id="listType" class="input" style="grid-column:1/-1"><option>🛒 Mercado</option><option>🥬 Verdureira</option></select><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
+    <form id="addForm" class="add"><select id="listType" class="input" style="display:none;grid-column:1/-1"><option>🛒 Mercado</option><option>🥬 Verdureira</option></select><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
     <div id="list"></div>
   </section>
 
@@ -102,7 +110,7 @@ const firebaseConfig={
 };
 const app=initializeApp(firebaseConfig), db=getDatabase(app);
 const listRef=ref(db,"listaCompras"), histRef=ref(db,"historicoCompras"), pricesRef=ref(db,"precosProdutos"), marketsRef=ref(db,"mercados"), marketPricesRef=ref(db,"precosPorMercado");
-let products={}, history={}, priceHistory={}, markets={}, marketPrices={}, searchTerm="";
+let products={}, history={}, priceHistory={}, markets={}, marketPrices={}, searchTerm="", activeList="🛒 Mercado";
 
 const listTypes=["🛒 Mercado","🥬 Verdureira"];
 const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
@@ -158,10 +166,10 @@ function render(){
    const tipo=listTypes.includes(i.tipoLista)?i.tipoLista:"🛒 Mercado"; grouped[tipo].push([id,i]);
  });
  const root=document.querySelector("#list");root.innerHTML="";
- for(const tipo of listTypes){
+ for(const tipo of [activeList]){
    const sec=document.createElement("section");sec.className="category";
    sec.innerHTML=`<div class="cathead"><h2>${tipo}</h2><span>${grouped[tipo].length} item(ns)</span></div>`;
-   if(!grouped[tipo].length){const e=document.createElement("div");e.className="empty";e.textContent=tipo==="🥬 Verdureira"?"Nenhum item na lista da verdureira.":"Nenhum item na lista do mercado.";sec.appendChild(e)}
+   if(!grouped[tipo].length){const e=document.createElement("div");e.className="empty";e.textContent=searchTerm?"Nenhum item encontrado.":(tipo==="🥬 Verdureira"?"Nenhum item na lista da verdureira.":"Nenhum item na lista do mercado.");sec.appendChild(e)}
    grouped[tipo].forEach(([id,i])=>{
      const q=Number(i.quantidade)||1,p=Number(i.preco)||0,prev=previousPrice(i),sub=q*p;let hint="Sem preço anterior",cls="";
      if(p>0&&prev>0){const diff=p-prev;if(Math.abs(diff)<.005)hint="Mesmo preço da última compra";else if(diff<0){hint=`↓ ${money(Math.abs(diff))} mais barato`;cls="cheaper"}else{hint=`↑ ${money(diff)} mais caro`;cls="expensive"}}
@@ -198,6 +206,16 @@ function renderHistory(){
  rows.forEach(([id,h])=>{const items=Object.values(h.itens||{}),bought=items.filter(i=>i.comprado);const d=new Date(h.data||Date.now()).toLocaleString("pt-BR",{dateStyle:"medium",timeStyle:"short"});const el=document.createElement("article");el.className="history";el.innerHTML=`<div class="historytop"><div><h3>Compra</h3><div class="date">${d}</div></div><div class="htotal">${money(h.totalGasto)}</div></div><div class="historydetails">${bought.length} comprado(s) • ${items.length-bought.length} não comprado(s) • Não gasto: ${money(h.economizado)}<br>${items.map(i=>`${i.comprado?"✓":"○"} ${esc(i.nome)} × ${i.quantidade} — ${money(i.subtotal)}`).join("<br>")}</div>`;root.appendChild(el)})
 }
 
+
+
+const listTypeSelect=document.querySelector("#listType");
+document.querySelectorAll(".list-switch-btn").forEach(btn=>btn.addEventListener("click",()=>{
+  activeList=btn.dataset.list;
+  document.querySelectorAll(".list-switch-btn").forEach(b=>b.classList.toggle("active",b===btn));
+  listTypeSelect.value=activeList;
+  render();
+}));
+listTypeSelect.value=activeList;
 
 const searchInput=document.querySelector("#searchItem"),clearSearch=document.querySelector("#clearSearch");
 searchInput.addEventListener("input",e=>{searchTerm=e.target.value.trim();clearSearch.style.display=searchTerm?"block":"none";render()});
