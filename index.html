@@ -1,784 +1,155 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Lista de Compras</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Nossa Lista</title>
 <style>
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f3f5f4;
-  color:#222;
-}
-
-.container{
-  max-width:650px;
-  margin:auto;
-  padding:16px;
-}
-
-h1{
-  text-align:center;
-  margin-bottom:4px;
-}
-
-.status{
-  text-align:center;
-  margin-bottom:20px;
-  color:#198754;
-  font-size:14px;
-}
-
-.card{
-  background:white;
-  padding:16px;
-  border-radius:16px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-  margin-bottom:16px;
-}
-
-.form{
-  display:grid;
-  grid-template-columns:1fr 90px;
-  gap:10px;
-}
-
-input{
-  width:100%;
-  padding:13px;
-  border:1px solid #ccc;
-  border-radius:9px;
-  font-size:16px;
-}
-
-.adicionar{
-  grid-column:1/-1;
-  padding:14px;
-  border:0;
-  border-radius:10px;
-  background:#198754;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-}
-
-.item{
-  background:white;
-  padding:15px;
-  border-radius:14px;
-  margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.07);
-}
-
-.topo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.check{
-  width:23px;
-  height:23px;
-}
-
-.nome{
-  flex:1;
-  font-size:18px;
-  font-weight:bold;
-}
-
-.comprado .nome{
-  text-decoration:line-through;
-  color:#999;
-}
-
-.excluir{
-  border:0;
-  background:#dc3545;
-  color:white;
-  padding:8px 10px;
-  border-radius:7px;
-}
-
-.detalhes{
-  display:grid;
-  grid-template-columns:90px 1fr;
-  gap:10px;
-  margin-top:15px;
-}
-
-label{
-  display:block;
-  font-size:12px;
-  color:#777;
-  margin-bottom:5px;
-}
-
-.subtotal{
-  margin-top:12px;
-  text-align:right;
-}
-
-.total{
-  background:#198754;
-  color:white;
-  padding:20px;
-  border-radius:16px;
-  margin-top:20px;
-}
-
-.totalLinha{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.totalValor{
-  font-size:29px;
-  font-weight:bold;
-}
-
-.resumo{
-  margin-top:8px;
-  font-size:13px;
-}
-
-.vazio{
-  text-align:center;
-  padding:30px;
-  color:#888;
-}
-
-.limpar{
-  width:100%;
-  margin-top:15px;
-  padding:13px;
-  background:white;
-  color:#dc3545;
-  border:1px solid #dc3545;
-  border-radius:9px;
-  font-weight:bold;
-}
-
-.sincronizando{
-  color:#777;
-}
+:root{--bg:#f4f6f8;--card:#fff;--text:#15171a;--muted:#73777f;--line:#e7e9ed;--accent:#16a36a;--accent2:#0c7b50;--danger:#d94747;--warn:#b7791f;--shadow:0 10px 30px rgba(17,24,39,.08)}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;margin:auto;padding:18px 16px 104px}
+.header{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 16px}.title h1{margin:0;font-size:26px}.title small{color:var(--muted)}
+.sync{font-size:12px;padding:7px 10px;border-radius:999px;background:#e9f8f1;color:var(--accent2);font-weight:700}.sync.off{background:#fff0f0;color:var(--danger)}
+.hero{background:linear-gradient(135deg,#111827,#243145);color:#fff;border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:14px}
+.hero .eyebrow{font-size:12px;opacity:.72;text-transform:uppercase;letter-spacing:.08em}.hero .money{font-size:36px;font-weight:850;margin:4px 0 16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.stat{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);padding:10px;border-radius:15px}.stat b{display:block;font-size:16px}.stat span{font-size:11px;opacity:.7}
+.add{background:var(--card);border-radius:20px;padding:14px;box-shadow:var(--shadow);display:grid;grid-template-columns:1fr 76px 48px;gap:8px;margin-bottom:16px}
+.input{border:1px solid var(--line);background:#fafbfc;border-radius:13px;padding:12px;min-width:0;outline:none}.input:focus{border-color:var(--accent)}
+.addbtn{border:0;border-radius:13px;background:var(--accent);color:#fff;font-size:25px;font-weight:700}
+.category{margin:18px 0}.cathead{display:flex;align-items:center;justify-content:space-between;margin:0 3px 9px}.cathead h2{font-size:16px;margin:0}.cathead span{font-size:12px;color:var(--muted)}
+.item{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:13px;margin-bottom:9px}.item.done{opacity:.7}.itemtop{display:flex;align-items:center;gap:10px}.check{width:24px;height:24px;accent-color:var(--accent)}.name{font-weight:750;flex:1;min-width:0}.name.done{text-decoration:line-through}.trash{border:0;background:#fff0f0;color:var(--danger);width:38px;height:38px;border-radius:11px}
+.fields{display:grid;grid-template-columns:76px 1fr 1fr;gap:8px;margin-top:11px}.field label{display:block;font-size:10px;color:var(--muted);margin:0 0 4px 3px}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:11px;padding:9px;background:#fafbfc;min-width:0}
+.itemfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:9px;font-size:12px}.subtotal{font-weight:800}.pricehint{color:var(--muted)}.pricehint.cheaper{color:var(--accent2)}.pricehint.expensive{color:var(--danger)}
+.empty{text-align:center;color:var(--muted);padding:34px 12px;background:var(--card);border-radius:18px;border:1px dashed var(--line)}
+.panel{display:none}.panel.active{display:block}.summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sumcard,.history{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.sumcard small{color:var(--muted)}.sumcard b{display:block;font-size:22px;margin-top:4px}
+.finish{width:100%;border:0;border-radius:15px;background:var(--accent);color:#fff;padding:15px;font-weight:800;margin-top:12px}.note{font-size:12px;color:var(--muted);margin:12px 2px}
+.history{margin-bottom:10px}.historytop{display:flex;justify-content:space-between;gap:10px}.history h3{margin:0;font-size:15px}.history .date{font-size:12px;color:var(--muted)}.history .htotal{font-weight:850}.historydetails{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.7}
+.nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),720px);display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:7px;background:rgba(17,24,39,.96);border-radius:20px;box-shadow:0 15px 35px rgba(0,0,0,.2);z-index:20}
+.nav button{border:0;background:transparent;color:#aeb6c4;border-radius:14px;padding:10px 6px;font-size:12px}.nav button.active{background:#fff;color:#111827;font-weight:800}
+@media(max-width:480px){.app{padding:12px 12px 96px}.hero{padding:18px}.hero .money{font-size:31px}.stats{gap:6px}.stat{padding:8px}.fields{grid-template-columns:70px 1fr}.fields .categoryfield{grid-column:1/-1}.summarygrid{grid-template-columns:1fr 1fr}.add{grid-template-columns:1fr 68px 46px}}
 </style>
 </head>
-
 <body>
+<main class="app">
+  <header class="header"><div class="title"><h1>Nossa Lista 🛒</h1><small>Compras compartilhadas em tempo real</small></div><div id="sync" class="sync">Conectando…</div></header>
 
-<div class="container">
+  <section id="listaPanel" class="panel active">
+    <div class="hero">
+      <div class="eyebrow">Total estimado / informado</div><div id="heroTotal" class="money">R$ 0,00</div>
+      <div class="stats"><div class="stat"><b id="heroBought">0</b><span>comprados</span></div><div class="stat"><b id="heroSaved">R$ 0,00</b><span>não gastos</span></div><div class="stat"><b id="heroItems">0</b><span>itens</span></div></div>
+    </div>
+    <form id="addForm" class="add"><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
+    <div id="list"></div>
+  </section>
 
-<h1>🛒 Lista de Compras</h1>
+  <section id="resumoPanel" class="panel">
+    <div class="summarygrid">
+      <div class="sumcard"><small>Total da lista</small><b id="sTotal">R$ 0,00</b></div>
+      <div class="sumcard"><small>Gasto no carrinho</small><b id="sSpent">R$ 0,00</b></div>
+      <div class="sumcard"><small>Não comprado</small><b id="sSaved">R$ 0,00</b></div>
+      <div class="sumcard"><small>Itens comprados</small><b id="sCount">0/0</b></div>
+    </div>
+    <p class="note">“Não comprado” usa o preço informado nesta lista. Se não houver preço, o app usa o último preço conhecido do produto.</p>
+    <button id="finish" class="finish">Finalizar compra e salvar no histórico</button>
+  </section>
 
-<div id="status" class="status sincronizando">
-  Conectando...
-</div>
+  <section id="historicoPanel" class="panel"><div id="historyList"></div></section>
+</main>
 
-<div class="card">
-
-  <div class="form">
-
-    <input
-      id="produto"
-      type="text"
-      placeholder="Nome do produto"
-      autocomplete="off"
-    >
-
-    <input
-      id="quantidade"
-      type="number"
-      min="1"
-      value="1"
-      placeholder="Qtd."
-    >
-
-    <button
-      class="adicionar"
-      onclick="adicionarProduto()"
-    >
-      + Adicionar produto
-    </button>
-
-  </div>
-
-</div>
-
-<div id="lista"></div>
-
-<div class="total">
-
-  <div class="totalLinha">
-
-    <span>
-      TOTAL DA COMPRA
-    </span>
-
-    <span
-      id="total"
-      class="totalValor"
-    >
-      R$ 0,00
-    </span>
-
-  </div>
-
-  <div
-    id="resumo"
-    class="resumo"
-  >
-    0 produtos
-  </div>
-
-</div>
-
-<button
-  class="limpar"
-  onclick="limparLista()"
->
-  Limpar toda a lista
-</button>
-
-</div>
-
+<nav class="nav">
+  <button class="active" data-tab="lista">🛒<br>Lista</button>
+  <button data-tab="resumo">📊<br>Resumo</button>
+  <button data-tab="historico">🕘<br>Histórico</button>
+</nav>
 
 <script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import {getDatabase,ref,push,set,update,remove,onValue,get} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
 
-import {
-  initializeApp
-} from
-"https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-
-import {
-  getDatabase,
-  ref,
-  push,
-  set,
-  update,
-  remove,
-  onValue
-} from
-"https://www.gstatic.com/firebasejs/12.4.0/firebase-database.js";
-
-
-const firebaseConfig = {
-
-  apiKey:
-  "AIzaSyAOCPTESMzSpfPFl2np5a-HgMWoE6XQ7m4",
-
-  authDomain:
-  "listadecompra-ce2b5.firebaseapp.com",
-
-  databaseURL:
-  "https://listadecompra-ce2b5-default-rtdb.firebaseio.com",
-
-  projectId:
-  "listadecompra-ce2b5",
-
-  storageBucket:
-  "listadecompra-ce2b5.firebasestorage.app",
-
-  messagingSenderId:
-  "944177336346",
-
-  appId:
-  "1:944177336346:web:e51d799e571b86a85041a3"
-
+const firebaseConfig={
+ apiKey:"AIzaSyAOCPTESMzSpfPFl2np5a-HgMWoE6XQ7m4",
+ authDomain:"listadecompra-ce2b5.firebaseapp.com",
+ databaseURL:"https://listadecompra-ce2b5-default-rtdb.firebaseio.com",
+ projectId:"listadecompra-ce2b5",
+ storageBucket:"listadecompra-ce2b5.firebasestorage.app",
+ messagingSenderId:"944177336346",
+ appId:"1:944177336346:web:e51d799e571b86a85041a3"
 };
-
-
-const app =
-  initializeApp(firebaseConfig);
-
-const database =
-  getDatabase(app);
-
-const listaRef =
-  ref(database,"listaCompras");
-
-
-let produtos = {};
-
-
-const status =
-  document.getElementById("status");
-
-
-onValue(
-
-  listaRef,
-
-  (snapshot)=>{
-
-    produtos =
-      snapshot.val() || {};
-
-    status.textContent =
-      "● Lista sincronizada";
-
-    status.classList.remove(
-      "sincronizando"
-    );
-
-    mostrarLista();
-
-  },
-
-  (erro)=>{
-
-    console.error(erro);
-
-    status.textContent =
-      "Erro ao conectar ao Firebase";
-
-  }
-
-);
-
-
-window.adicionarProduto =
-async function(){
-
-  const campoProduto =
-    document.getElementById("produto");
-
-  const campoQuantidade =
-    document.getElementById("quantidade");
-
-
-  const nome =
-    campoProduto.value.trim();
-
-  const quantidade =
-    Math.max(
-      1,
-      Number(campoQuantidade.value) || 1
-    );
-
-
-  if(!nome){
-
-    alert(
-      "Digite o nome do produto."
-    );
-
-    return;
-
-  }
-
-
-  const novoProduto =
-    push(listaRef);
-
-
-  await set(
-    novoProduto,
-    {
-
-      nome:nome,
-
-      quantidade:quantidade,
-
-      preco:0,
-
-      comprado:false,
-
-      criadoEm:Date.now()
-
-    }
-  );
-
-
-  campoProduto.value = "";
-
-  campoQuantidade.value = 1;
-
-  campoProduto.focus();
-
-};
-
-
-window.alterarQuantidade =
-async function(id,valor){
-
-  let quantidade =
-    Number(valor);
-
-  if(
-    !quantidade ||
-    quantidade < 1
-  ){
-    quantidade = 1;
-  }
-
-  await update(
-    ref(
-      database,
-      "listaCompras/" + id
-    ),
-    {
-      quantidade:quantidade
-    }
-  );
-
-};
-
-
-window.alterarPreco =
-async function(id,valor){
-
-  let preco =
-    parseFloat(
-      String(valor)
-      .replace(",",".")
-    );
-
-  if(
-    !Number.isFinite(preco) ||
-    preco < 0
-  ){
-    preco = 0;
-  }
-
-  await update(
-    ref(
-      database,
-      "listaCompras/" + id
-    ),
-    {
-      preco:preco
-    }
-  );
-
-};
-
-
-window.marcarComprado =
-async function(id,valor){
-
-  await update(
-    ref(
-      database,
-      "listaCompras/" + id
-    ),
-    {
-      comprado:valor
-    }
-  );
-
-};
-
-
-window.excluirProduto =
-async function(id){
-
-  if(
-    !confirm(
-      "Excluir este produto?"
-    )
-  ){
-    return;
-  }
-
-  await remove(
-    ref(
-      database,
-      "listaCompras/" + id
-    )
-  );
-
-};
-
-
-window.limparLista =
-async function(){
-
-  if(
-    !confirm(
-      "Apagar todos os produtos da lista?"
-    )
-  ){
-    return;
-  }
-
-  await remove(listaRef);
-
-};
-
-
-function dinheiro(valor){
-
-  return Number(valor || 0)
-  .toLocaleString(
-    "pt-BR",
-    {
-      style:"currency",
-      currency:"BRL"
-    }
-  );
-
+const app=initializeApp(firebaseConfig), db=getDatabase(app);
+const listRef=ref(db,"listaCompras"), histRef=ref(db,"historicoCompras"), pricesRef=ref(db,"precosProdutos");
+let products={}, history={}, priceHistory={};
+
+const categories=[
+ ["🥤 Bebidas",["coca","pepsi","guarana","refrigerante","agua","suco","cerveja","energetico","cha","cafe bebida"]],
+ ["🍎 Frutas",["banana","maca","maçã","laranja","uva","mamao","mamão","melancia","melao","melão","morango","abacaxi","pera","kiwi","manga","limao","limão","abacate"]],
+ ["🥗 Saladas e verduras",["alface","rucula","rúcula","couve","repolho","tomate","pepino","cenoura","beterraba","brocolis","brócolis","cebola","pimentao","pimentão","batata","mandioca"]],
+ ["🥩 Carnes",["carne","frango","linguica","linguiça","bife","costela","porco","suino","suíno","peixe","file","filé","patinho","acém","acem","picanha","hamburguer","hambúrguer"]],
+ ["🥛 Laticínios",["leite","queijo","iogurte","manteiga","requeijao","requeijão","creme de leite","nata"]],
+ ["🧴 Higiene",["shampoo","condicionador","sabonete","desodorante","pasta de dente","creme dental","escova de dente","papel higienico","papel higiênico","fio dental","absorvente"]],
+ ["🧹 Produtos de limpeza",["detergente","sabao","sabão","amaciante","agua sanitaria","água sanitária","desinfetante","limpa vidro","limpa-vidro","esponja","multiuso","alvejante","saco de lixo"]],
+ ["🍞 Padaria",["pao","pão","bolo","torrada","bisnaguinha","croissant"]],
+ ["❄️ Congelados",["congelado","pizza","lasanha","nuggets","sorvete"]],
+ ["🛒 Mercearia",["arroz","feijao","feijão","macarrao","macarrão","farinha","acucar","açúcar","sal","oleo","óleo","azeite","molho","biscoito","bolacha","cereal","aveia","milho","ervilha"]]
+];
+const categoryNames=[...categories.map(x=>x[0]),"📦 Outros"];
+const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+function autoCategory(name){const n=norm(name);for(const [cat,words] of categories)if(words.some(w=>n.includes(norm(w))))return cat;return "📦 Outros"}
+function keyName(name){return norm(name).replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"").slice(0,80)||"produto"}
+const money=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const esc=s=>{const d=document.createElement("div");d.textContent=s||"";return d.innerHTML};
+function knownPrice(item){const p=Number(item.preco)||0;if(p>0)return p;const ph=priceHistory[keyName(item.nome)];return Number(ph?.ultimoPreco)||0}
+function totals(){let total=0,spent=0,saved=0,bought=0;for(const i of Object.values(products)){const q=Number(i.quantidade)||1,p=knownPrice(i),sub=q*p;total+=sub;if(i.comprado){spent+=sub;bought++}else saved+=sub}return{total,spent,saved,bought,count:Object.keys(products).length}}
+function previousPrice(item){return Number(priceHistory[keyName(item.nome)]?.ultimoPreco)||0}
+
+onValue(listRef,s=>{products=s.val()||{};document.querySelector("#sync").textContent="● Sincronizado";document.querySelector("#sync").classList.remove("off");render() },()=>{document.querySelector("#sync").textContent="Sem conexão";document.querySelector("#sync").classList.add("off")});
+onValue(histRef,s=>{history=s.val()||{};renderHistory()});
+onValue(pricesRef,s=>{priceHistory=s.val()||{};render()});
+
+document.querySelector("#addForm").addEventListener("submit",async e=>{e.preventDefault();const inp=document.querySelector("#product"),q=document.querySelector("#qty");const nome=inp.value.trim();if(!nome)return;const quantidade=Math.max(1,Number(q.value)||1);await set(push(listRef),{nome,quantidade,preco:0,comprado:false,categoria:autoCategory(nome),criadoEm:Date.now()});inp.value="";q.value=1;inp.focus()});
+
+function render(){
+ const grouped={};categoryNames.forEach(c=>grouped[c]=[]);
+ Object.entries(products).sort((a,b)=>(a[1].criadoEm||0)-(b[1].criadoEm||0)).forEach(([id,i])=>{const c=categoryNames.includes(i.categoria)?i.categoria:autoCategory(i.nome);(grouped[c]||grouped["📦 Outros"]).push([id,i])});
+ const root=document.querySelector("#list");root.innerHTML="";
+ if(!Object.keys(products).length)root.innerHTML='<div class="empty">Sua lista está vazia.<br>Adicione o primeiro produto acima.</div>';
+ for(const cat of categoryNames){if(!grouped[cat]?.length)continue;const sec=document.createElement("section");sec.className="category";sec.innerHTML=`<div class="cathead"><h2>${cat}</h2><span>${grouped[cat].length} item(ns)</span></div>`;
+  grouped[cat].forEach(([id,i])=>{const q=Number(i.quantidade)||1,p=Number(i.preco)||0,prev=previousPrice(i),sub=q*p;let hint="Sem preço anterior",cls="";
+   if(p>0&&prev>0){const diff=p-prev;if(Math.abs(diff)<.005)hint="Mesmo preço da última compra";else if(diff<0){hint=`↓ ${money(Math.abs(diff))} mais barato`;cls="cheaper"}else{hint=`↑ ${money(diff)} mais caro`;cls="expensive"}}
+   const el=document.createElement("article");el.className="item"+(i.comprado?" done":"");el.innerHTML=`
+    <div class="itemtop"><input class="check" type="checkbox" ${i.comprado?"checked":""} aria-label="Comprado"><div class="name ${i.comprado?"done":""}">${esc(i.nome)}</div><button class="trash" type="button" aria-label="Excluir">✕</button></div>
+    <div class="fields"><div class="field"><label>Qtd.</label><input class="qtyedit" type="number" min="1" step="1" value="${q}"></div><div class="field"><label>Preço unitário</label><input class="priceedit" type="number" min="0" step=".01" inputmode="decimal" placeholder="R$ 0,00" value="${p||""}"></div><div class="field categoryfield"><label>Categoria</label><select class="catedit">${categoryNames.map(c=>`<option ${c===(i.categoria||autoCategory(i.nome))?"selected":""}>${c}</option>`).join("")}</select></div></div>
+    <div class="itemfoot"><span class="pricehint ${cls}">${hint}</span><span class="subtotal">${money(sub)}</span></div>`;
+   el.querySelector(".check").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{comprado:e.target.checked}));
+   el.querySelector(".trash").addEventListener("click",()=>{if(confirm("Excluir "+i.nome+"?"))remove(ref(db,"listaCompras/"+id))});
+   el.querySelector(".qtyedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{quantidade:Math.max(1,Number(e.target.value)||1)}));
+   el.querySelector(".priceedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{preco:Math.max(0,Number(e.target.value)||0)}));
+   el.querySelector(".catedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{categoria:e.target.value,categoriaManual:true}));
+   sec.appendChild(el);
+  });root.appendChild(sec);
+ }
+ const t=totals();document.querySelector("#heroTotal").textContent=money(t.total);document.querySelector("#heroBought").textContent=t.bought;document.querySelector("#heroSaved").textContent=money(t.saved);document.querySelector("#heroItems").textContent=t.count;
+ document.querySelector("#sTotal").textContent=money(t.total);document.querySelector("#sSpent").textContent=money(t.spent);document.querySelector("#sSaved").textContent=money(t.saved);document.querySelector("#sCount").textContent=`${t.bought}/${t.count}`;
 }
 
+document.querySelector("#finish").addEventListener("click",async()=>{
+ const entries=Object.entries(products);if(!entries.length)return alert("A lista está vazia.");
+ if(!confirm("Finalizar esta compra e salvar no histórico?"))return;
+ const t=totals(), now=Date.now(), items={};
+ for(const [id,i] of entries){const q=Number(i.quantidade)||1,p=knownPrice(i);items[id]={nome:i.nome,quantidade:q,preco:p,comprado:!!i.comprado,categoria:i.categoria||autoCategory(i.nome),subtotal:q*p};
+  if(i.comprado&&p>0){const k=keyName(i.nome),old=priceHistory[k]||{};await update(ref(db,"precosProdutos/"+k),{nome:i.nome,ultimoPreco:p,precoAnterior:Number(old.ultimoPreco)||0,atualizadoEm:now})}
+ }
+ await set(push(histRef),{data:now,totalLista:t.total,totalGasto:t.spent,economizado:t.saved,itens:items});
+ await remove(listRef);alert("Compra salva no histórico!");
+});
 
-function escapar(texto){
-
-  const div =
-    document.createElement("div");
-
-  div.textContent =
-    texto || "";
-
-  return div.innerHTML;
-
+function renderHistory(){
+ const root=document.querySelector("#historyList"),rows=Object.entries(history).sort((a,b)=>(b[1].data||0)-(a[1].data||0));root.innerHTML="";
+ if(!rows.length){root.innerHTML='<div class="empty">Nenhuma compra finalizada ainda.</div>';return}
+ rows.forEach(([id,h])=>{const items=Object.values(h.itens||{}),bought=items.filter(i=>i.comprado);const d=new Date(h.data||Date.now()).toLocaleString("pt-BR",{dateStyle:"medium",timeStyle:"short"});const el=document.createElement("article");el.className="history";el.innerHTML=`<div class="historytop"><div><h3>Compra</h3><div class="date">${d}</div></div><div class="htotal">${money(h.totalGasto)}</div></div><div class="historydetails">${bought.length} comprado(s) • ${items.length-bought.length} não comprado(s) • Não gasto: ${money(h.economizado)}<br>${items.map(i=>`${i.comprado?"✓":"○"} ${esc(i.nome)} × ${i.quantidade} — ${money(i.subtotal)}`).join("<br>")}</div>`;root.appendChild(el)})
 }
 
-
-function mostrarLista(){
-
-  const lista =
-    document.getElementById("lista");
-
-
-  lista.innerHTML = "";
-
-
-  const itens =
-    Object.entries(produtos);
-
-
-  if(itens.length === 0){
-
-    lista.innerHTML = `
-      <div class="vazio">
-        Sua lista está vazia.<br><br>
-        Adicione os produtos que vocês
-        precisam comprar.
-      </div>
-    `;
-
-  }
-
-
-  itens
-
-  .sort(
-    (a,b)=>
-    (a[1].criadoEm || 0) -
-    (b[1].criadoEm || 0)
-  )
-
-  .forEach(
-    ([id,item])=>{
-
-      const quantidade =
-        Number(item.quantidade) || 1;
-
-      const preco =
-        Number(item.preco) || 0;
-
-      const subtotal =
-        quantidade * preco;
-
-
-      const div =
-        document.createElement("div");
-
-
-      div.className =
-        "item" +
-        (
-          item.comprado
-          ? " comprado"
-          : ""
-        );
-
-
-      div.innerHTML = `
-
-        <div class="topo">
-
-          <input
-            class="check"
-            type="checkbox"
-            ${item.comprado
-              ? "checked"
-              : ""
-            }
-            onchange="
-              marcarComprado(
-                '${id}',
-                this.checked
-              )
-            "
-          >
-
-          <div class="nome">
-            ${escapar(item.nome)}
-          </div>
-
-          <button
-            class="excluir"
-            onclick="
-              excluirProduto('${id}')
-            "
-          >
-            Excluir
-          </button>
-
-        </div>
-
-
-        <div class="detalhes">
-
-          <div>
-
-            <label>
-              Quantidade
-            </label>
-
-            <input
-              type="number"
-              min="1"
-              value="${quantidade}"
-              onchange="
-                alterarQuantidade(
-                  '${id}',
-                  this.value
-                )
-              "
-            >
-
-          </div>
-
-
-          <div>
-
-            <label>
-              Preço unitário (R$)
-            </label>
-
-            <input
-              type="number"
-              inputmode="decimal"
-              min="0"
-              step="0.01"
-              placeholder="0,00"
-
-              value="${
-                preco > 0
-                ? preco
-                : ""
-              }"
-
-              onchange="
-                alterarPreco(
-                  '${id}',
-                  this.value
-                )
-              "
-            >
-
-          </div>
-
-        </div>
-
-
-        <div class="subtotal">
-
-          Subtotal:
-
-          <strong>
-            ${dinheiro(subtotal)}
-          </strong>
-
-        </div>
-
-      `;
-
-
-      lista.appendChild(div);
-
-    }
-  );
-
-
-  atualizarTotal();
-
-}
-
-
-function atualizarTotal(){
-
-  let total = 0;
-
-  let comprados = 0;
-
-
-  Object.values(produtos)
-  .forEach(item=>{
-
-    const quantidade =
-      Number(item.quantidade) || 1;
-
-    const preco =
-      Number(item.preco) || 0;
-
-
-    total +=
-      quantidade * preco;
-
-
-    if(item.comprado){
-      comprados++;
-    }
-
-  });
-
-
-  const quantidadeProdutos =
-    Object.keys(produtos).length;
-
-
-  document
-  .getElementById("total")
-  .textContent =
-    dinheiro(total);
-
-
-  document
-  .getElementById("resumo")
-  .textContent =
-    quantidadeProdutos +
-    " produtos • " +
-    comprados +
-    " no carrinho";
-
-}
-
-
-document
-.getElementById("produto")
-.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Enter"){
-      adicionarProduto();
-    }
-
-  }
-);
-
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));document.querySelector("#"+b.dataset.tab+"Panel").classList.add("active")}));
 </script>
-
 </body>
 </html>
