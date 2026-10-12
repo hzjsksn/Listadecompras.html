@@ -50,6 +50,26 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 
 .current-purchase-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px;padding:16px 17px;border-radius:20px;background:#111827;color:#fff;box-shadow:0 8px 25px rgba(17,24,39,.14)}
 .current-purchase-card small{display:block;font-size:13px;font-weight:800}.current-purchase-note{margin-top:3px;font-size:10px;opacity:.68}.current-purchase-card strong{font-size:25px;white-space:nowrap;letter-spacing:-.6px}
+
+.market-history-box{margin-bottom:14px}.saved-market-purchase{padding:13px 0;border-top:1px solid var(--line)}
+.saved-market-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.saved-market-head strong{font-size:17px}
+.saved-market-items{font-size:13px;color:var(--muted);line-height:1.65;margin-top:7px}
+
+.confirm-overlay[hidden]{display:none!important}.confirm-overlay{position:fixed;inset:0;z-index:999;background:#0009;display:flex;align-items:center;justify-content:center;padding:18px}
+.confirm-dialog{width:min(100%,440px);background:white;padding:23px;border-radius:22px;display:grid;gap:12px;color:#111827}
+.confirm-dialog h2,.confirm-dialog p{margin:0}.confirm-actions{display:flex;gap:8px}.confirm-actions button{flex:1;border:0;border-radius:12px;padding:13px;font-weight:800}.confirm-actions button:last-child{background:#16a34a;color:white}
+.year-card{padding:18px;background:white;border-radius:20px;margin-bottom:15px}.year-card h3{margin:0 0 10px}.year-grand{display:flex;justify-content:space-between;gap:10px;margin-top:12px}.year-row{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #eee}
+.estimate-source{font-size:11px;opacity:.78;margin:4px 0 12px;line-height:1.4}.insights-card{background:var(--card,#fff);border-radius:17px;padding:14px;margin:12px 0}.insights-card h3{margin:0 0 12px;font-size:15px}.suggest-btn{margin:4px;padding:9px;border:1px solid #d1d5db;background:#f3f4f6;border-radius:12px}.device-label{margin-top:12px;font-size:12px}.month-chart{display:flex;gap:3px;align-items:end;height:170px;overflow-x:auto}.month-col{flex:1;min-width:28px;text-align:center;font-size:9px;display:flex;flex-direction:column;justify-content:end;height:100%}.month-col span{font-size:8px}.month-track{height:115px;display:flex;flex-direction:column;justify-content:end;background:#edf2f7;border-radius:5px}.month-track div{background:#16a34a;border-radius:5px}.compare-line{padding:9px 0;border-bottom:1px solid #ddd;font-size:12px}.compare-line div{margin-top:4px}.edit-by{font-size:10px;opacity:.65;margin-top:4px}
+
+.add{grid-template-columns:minmax(0,1fr) 94px 44px 65px 46px}.voice-btn{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text)}
+.theme-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--card);padding:12px;border-radius:15px;margin-bottom:12px}.theme-toolbar label{font-size:12px;font-weight:700}.theme-toolbar select{flex:1;max-width:160px;padding:8px}
+.priority-field{display:flex;align-items:center;gap:9px;margin-top:8px;font-size:11px;color:var(--muted)}.priorityedit{border:1px solid var(--line);border-radius:9px;padding:7px;background:var(--card);color:var(--text)}.priority-dot{min-width:13px}
+:root[data-accent="blue"]{--accent:#2563eb;--accent2:#1d4ed8}:root[data-accent="purple"]{--accent:#8b5cf6;--accent2:#7c3aed}
+:root[data-theme="dark"]{--bg:#0c111b;--card:#182230;--text:#f3f6fb;--muted:#b0bac8;--line:#354254;--shadow:0 10px 30px rgba(0,0,0,.28)}
+:root[data-theme="dark"] .input,:root[data-theme="dark"] .field input,:root[data-theme="dark"] .field select,:root[data-theme="dark"] .marketrow input,:root[data-theme="dark"] .searchbox input{background:#101927;color:var(--text)}
+:root[data-theme="dark"] .list-switch{background:#0f1927}:root[data-theme="dark"] .suggest-btn{background:#273446;color:var(--text);border-color:var(--line)}
+:root[data-theme="dark"] .confirm-dialog{background:var(--card);color:var(--text)}:root[data-theme="dark"] .year-card{background:var(--card)}
+@media(max-width:600px){.add{grid-template-columns:minmax(0,1fr) 80px 42px;gap:7px}.add #newPriority{grid-column:1/2}.add #voiceAdd{grid-column:2/3}.add #qty{grid-column:3/4}.add .addbtn{grid-column:1/-1;min-height:40px}}
 </style>
 </head>
 <body>
@@ -58,35 +78,49 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 
   <section id="listaPanel" class="panel active">
     <div class="hero">
-      <div class="eyebrow">Total estimado / informado</div><div id="heroTotal" class="money">R$ 0,00</div>
-      <div class="stats"><div class="stat"><b id="heroBought">0</b><span>comprados</span></div><div class="stat"><b id="heroSaved">R$ 0,00</b><span>não gastos</span></div><div class="stat"><b id="heroItems">0</b><span>itens</span></div></div>
+      <div class="eyebrow">Estimativa da compra atual</div><div id="heroTotal" class="money">R$ 0,00</div>
+      <div id="estimateSource" class="estimate-source">Calculando com base no histórico…</div><div class="stats"><div class="stat"><b id="heroBought">0</b><span>comprados</span></div><div class="stat"><b id="heroSaved">R$ 0,00</b><span>não gastos</span></div><div class="stat"><b id="heroItems">0</b><span>itens</span></div></div>
     </div>
     <div class="current-purchase-card">
       <div><small>Total que estou comprando</small><div class="current-purchase-note">Itens marcados como comprados</div></div>
       <strong id="currentPurchaseTotal">R$ 0,00</strong>
     </div>
-    <div class="list-switch">
+    <div class="theme-toolbar"><label for="themeChoice">🎨 Aparência</label><select id="themeChoice" class="input"><option value="light">☀️ Claro</option><option value="dark">🌙 Escuro</option><option value="system">📱 Automático</option></select><label for="accentChoice">Cor</label><select id="accentChoice" class="input"><option value="green">Verde</option><option value="blue">Azul</option><option value="purple">Roxo</option></select></div><div class="insights-card"><h3>🛍️ Compras frequentes</h3><div id="frequentProducts"></div><div class="device-label"><label>Nome de quem usa este aparelho</label><input id="deviceName" class="input" placeholder="Ex.: Gabriel"></div></div><div class="list-switch">
       <button type="button" class="list-switch-btn active" data-list="🛒 Mercado">🛒 Mercado</button>
       <button type="button" class="list-switch-btn" data-list="🥬 Verdureira">🥬 Verdureira</button>
 <button type="button" class="list-switch-btn" data-list="✅ Comprados">✅ Comprados</button>
     </div>
     <div class="searchbox"><span class="searchicon">🔎</span><input id="searchItem" type="search" placeholder="Pesquisar item na lista…" autocomplete="off"><button id="clearSearch" class="clearsearch" type="button">✕</button></div>
-    <form id="addForm" class="add"><select id="listType" class="input" style="display:none;grid-column:1/-1"><option>🛒 Mercado</option><option>🥬 Verdureira</option></select><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
+    <form id="addForm" class="add"><select id="listType" class="input" style="display:none;grid-column:1/-1"><option>🛒 Mercado</option><option>🥬 Verdureira</option></select><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><select id="newPriority" class="input" aria-label="Prioridade"><option value="normal">Normal</option><option value="high">⭐ Essencial</option><option value="low">Opcional</option></select><button type="button" id="voiceAdd" class="voice-btn" title="Adicionar produto por voz">🎙️</button><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
     <div id="list"></div>
   </section>
 
   <section id="resumoPanel" class="panel">
     <div class="summarygrid">
-      <div class="sumcard"><small>Total da lista</small><b id="sTotal">R$ 0,00</b></div>
+      <div class="sumcard"><small>Estimativa da lista</small><b id="sTotal">R$ 0,00</b></div>
       <div class="sumcard"><small>Gasto no carrinho</small><b id="sSpent">R$ 0,00</b></div>
       <div class="sumcard"><small>Não comprado</small><b id="sSaved">R$ 0,00</b></div>
       <div class="sumcard"><small>Itens comprados</small><b id="sCount">0/0</b></div>
     </div>
-    <p class="note">“Não comprado” usa o preço informado nesta lista. Se não houver preço, o app usa o último preço conhecido do produto.</p>
-    <button id="finish" class="finish">Finalizar compra e salvar no histórico</button>
+    <p class="note">A estimativa usa a compra anterior mais parecida e completa preços faltantes com o último preço conhecido de cada produto. Produtos sem preço conhecido não entram no cálculo; o valor pode ser parcial.</p>
+    <button id="finish" class="finish">✓ Confirmar compra</button>
+    <p class="note">Ao confirmar, escolha ou cadastre o mercado. A compra será salva no histórico e contabilizada no total do ano.</p>
+    <div id="confirmOverlay" class="confirm-overlay" hidden>
+      <div class="confirm-dialog">
+        <h2>Confirmar compra</h2>
+        <p>Onde você fez esta compra?</p>
+        <select id="finishMarket" class="input"><option value="">Selecione o mercado…</option></select>
+        <input id="newFinishMarket" class="input" placeholder="Ou digite o nome de um novo mercado">
+        <p id="confirmAmount"></p>
+        <div class="confirm-actions"><button id="cancelFinish" type="button">Cancelar</button><button id="saveFinish" type="button">Salvar no histórico</button></div>
+      </div>
+    </div>
   </section>
 
-  <section id="historicoPanel" class="panel"><div id="historyList"></div></section>
+  <section id="historicoPanel" class="panel">
+    <div class="year-card"><h3>Gastos por ano</h3><select id="historyYear" class="input"></select><div id="yearTotals"></div></div>
+    <div id="monthlyChart"></div><div id="historyList"></div>
+  </section>
 
   <section id="compararPanel" class="panel">
     <div class="marketbox">
@@ -95,7 +129,8 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
       <form id="marketForm" class="marketadd"><input id="marketName" class="input" placeholder="Ex.: Mercado A" required><button>Adicionar</button></form>
       <div id="markets"></div>
     </div>
-    <div id="marketComparison"></div>
+    <div id="marketPurchases"></div>
+    <div id="smartMarketComparison"></div><div id="marketComparison"></div>
   </section>
 </main>
 
@@ -120,8 +155,8 @@ const firebaseConfig={
  appId:"1:944177336346:web:e51d799e571b86a85041a3"
 };
 const app=initializeApp(firebaseConfig), db=getDatabase(app);
-const listRef=ref(db,"listaCompras"), histRef=ref(db,"historicoCompras"), pricesRef=ref(db,"precosProdutos"), marketsRef=ref(db,"mercados"), marketPricesRef=ref(db,"precosPorMercado");
-let products={}, history={}, priceHistory={}, markets={}, marketPrices={}, searchTerm="", activeList="🛒 Mercado";
+const listRef=ref(db,"listaCompras"), histRef=ref(db,"historicoCompras"), pricesRef=ref(db,"precosProdutos"), marketsRef=ref(db,"mercados"), marketPricesRef=ref(db,"precosPorMercado"), marketPurchasesRef=ref(db,"comprasPorMercado");
+let products={}, history={}, priceHistory={}, markets={}, marketPrices={}, marketPurchases={}, searchTerm="", activeList="🛒 Mercado";
 
 const listTypes=["🛒 Mercado","🥬 Verdureira"];
 const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
@@ -129,23 +164,126 @@ function autoCategory(name){return "🛒 Mercado"}
 function keyName(name){return norm(name).replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"").slice(0,80)||"produto"}
 const money=v=>(Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const esc=s=>{const d=document.createElement("div");d.textContent=s||"";return d.innerHTML};
-function knownPrice(item){const p=Number(item.preco)||0;if(p>0)return p;const ph=priceHistory[keyName(item.nome)];return Number(ph?.ultimoPreco)||0}
-function totals(){let total=0,spent=0,saved=0,bought=0;for(const i of Object.values(products)){const q=Number(i.quantidade)||1,p=knownPrice(i),sub=q*p;total+=sub;if(i.comprado){spent+=sub;bought+=q}else saved+=sub}return{total,spent,saved,bought,count:Object.keys(products).length}}
+// Busca a compra anterior mais parecida pela sobreposição de produtos,
+// mesmo que haja produtos a mais ou a menos. Usa preços por produto para completar lacunas.
+function estimateBasket(){
+ const current=Object.values(products),names=new Set(current.map(i=>keyName(i.nome)));
+ let best=null,bestScore=-1;
+ for(const h of Object.values(history)){
+   const bought=Object.values(h.itens||{}).filter(i=>i.comprado);
+   const prices=new Map();
+   for(const i of bought)if(Number(i.preco)>0)prices.set(keyName(i.nome),Number(i.preco));
+   const overlap=[...names].filter(k=>prices.has(k)).length;
+   if(!overlap)continue;
+   const union=new Set([...names,...prices.keys()]).size;
+   const score=overlap/union;
+   if(score>bestScore||(score===bestScore&&(h.data||0)>(best?.data||0))){best=h;bestScore=score}
+ }
+ const historical=new Map();
+ if(best)for(const i of Object.values(best.itens||{}))if(i.comprado&&Number(i.preco)>0)historical.set(keyName(i.nome),Number(i.preco));
+ let estimated=0,covered=0,entered=0;
+ for(const i of current){
+   const actual=Number(i.preco)||0,k=keyName(i.nome);
+   const prior=smartPrice(i)||historical.get(k)||0;
+   const price=actual>0?actual:prior;
+   if(price>0){covered++;if(actual>0)entered++;estimated+=(Number(i.quantidade)||1)*price}
+ }
+ return {estimated,covered,entered,count:current.length,best,similarity:bestScore};
+}
+function knownPrice(item){return smartPrice(item)}
+function totals(){let total=0,spent=0,saved=0,bought=0;for(const i of Object.values(products)){const q=Number(i.quantidade)||1,p=Number(i.preco)||0,sub=q*p;total+=sub;if(i.comprado){spent+=sub;bought+=q}else saved+=sub}return{total,spent,saved,bought,count:Object.keys(products).length}}
+
+function historyPrices(name){
+ const k=keyName(name),rows=[];
+ Object.values(history).forEach(h=>Object.values(h.itens||{}).forEach(i=>{
+  if(i.comprado&&keyName(i.nome)===k&&Number(i.preco)>0)rows.push({p:Number(i.preco),date:Number(h.data)||0,market:h.mercadoNome||"Não informado"});
+ }));
+ return rows.sort((a,b)=>b.date-a.date);
+}
+function smartPrice(item){
+ if(Number(item.preco)>0)return Number(item.preco);
+ const rows=historyPrices(item.nome).slice(0,5);
+ if(rows.length){let total=0,weight=0;rows.forEach((r,n)=>{const w=5-n;total+=r.p*w;weight+=w});return total/weight}
+ return previousPrice(item);
+}
+function renderInsights(){
+ const freq=document.querySelector("#frequentProducts");if(freq){
+  const names={};
+  Object.values(history).forEach(h=>Object.values(h.itens||{}).filter(i=>i.comprado).forEach(i=>{
+   const k=keyName(i.nome);if(!names[k])names[k]={name:i.nome,count:0};names[k].count++;
+  }));
+  const current=new Set(Object.values(products).map(i=>keyName(i.nome)));
+  freq.innerHTML="";
+  Object.entries(names).filter(([k,v])=>!current.has(k)).sort((a,b)=>b[1].count-a[1].count).slice(0,6).forEach(([k,v])=>{
+   const b=document.createElement("button");b.className="suggest-btn";b.textContent="+ "+v.name+" ("+v.count+"x)";
+   b.addEventListener("click",()=>set(push(listRef),{nome:v.name,quantidade:1,preco:0,comprado:false,tipoLista:activeList==="🥬 Verdureira"?activeList:"🛒 Mercado",criadoEm:Date.now(),adicionadoPor:deviceName()}));freq.appendChild(b);
+  });
+  if(!freq.children.length)freq.textContent="Suas sugestões aparecerão após registrar compras.";
+ }
+ const chart=document.querySelector("#monthlyChart");if(chart){
+  const year=Number(document.querySelector("#historyYear")?.value)||new Date().getFullYear();
+  const months=Array(12).fill(0);Object.values(history).forEach(h=>{const d=new Date(h.data||0);if(d.getFullYear()===year)months[d.getMonth()]+=Number(h.totalGasto)||0});
+  const max=Math.max(...months,1);
+  chart.innerHTML='<div class="insights-card"><h3>📊 Gastos mensais em '+year+'</h3><div class="month-chart">'+months.map((v,i)=>`<div class="month-col"><span>${v?money(v):"—"}</span><div class="month-track"><div style="height:${Math.max(0,v/max*100)}%"></div></div><small>${["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"][i]}</small></div>`).join("")+'</div></div>';
+ }
+ const comp=document.querySelector("#smartMarketComparison");if(comp){
+  const names=Object.values(products),marketsMap={};
+  names.forEach(i=>historyPrices(i.nome).forEach(r=>{(marketsMap[r.market]??={})[keyName(i.nome)]??=r.p}));
+  comp.innerHTML='<div class="insights-card"><h3>🏪 Comparação com preços reais do histórico</h3>'+
+  names.map(i=>{const rows=Object.entries(marketsMap).filter(([m,prices])=>prices[keyName(i.nome)]>0).map(([m,prices])=>({m,p:prices[keyName(i.nome)]})).sort((a,b)=>a.p-b.p);
+   if(!rows.length)return "";return `<div class="compare-line"><b>${esc(i.nome)}</b><div>Mais barato: ${esc(rows[0].m)} — ${money(rows[0].p)}</div>${rows.length>1?`<small>Diferença até o mais caro: ${money(rows[rows.length-1].p-rows[0].p)}</small>`:""}</div>`;
+  }).join("")+'</div>';
+ }
+}
+function deviceName(){return localStorage.getItem("nossaListaDeviceName")||"Pessoa não identificada"}
+const nameField=document.querySelector("#deviceName");nameField.value=localStorage.getItem("nossaListaDeviceName")||"";
+nameField.addEventListener("change",()=>localStorage.setItem("nossaListaDeviceName",nameField.value.trim()));
 function previousPrice(item){return Number(priceHistory[keyName(item.nome)]?.ultimoPreco)||0}
 
 onValue(listRef,s=>{products=s.val()||{};document.querySelector("#sync").textContent="● Sincronizado";document.querySelector("#sync").classList.remove("off");render() },()=>{document.querySelector("#sync").textContent="Sem conexão";document.querySelector("#sync").classList.add("off")});
-onValue(histRef,s=>{history=s.val()||{};renderHistory()});
+onValue(histRef,s=>{history=s.val()||{};renderHistory();render()});
 onValue(pricesRef,s=>{priceHistory=s.val()||{};render()});
 
 
-onValue(marketsRef,s=>{markets=s.val()||{};renderMarkets()});
+onValue(marketsRef,s=>{markets=s.val()||{};renderMarketSelect();renderMarkets()});
+onValue(marketPurchasesRef,s=>{marketPurchases=s.val()||{};renderMarketPurchases()});
 onValue(marketPricesRef,s=>{marketPrices=s.val()||{};renderMarkets()});
 
 document.querySelector("#marketForm").addEventListener("submit",async e=>{
  e.preventDefault();const inp=document.querySelector("#marketName"),nome=inp.value.trim();if(!nome)return;
- await set(push(marketsRef),{nome,criadoEm:Date.now()});inp.value="";
+ await set(push(marketsRef),{nome,criadoEm:Date.now(),adicionadoPor:deviceName()});inp.value="";
 });
 
+
+function renderMarketSelect(){
+ const sel=document.querySelector("#finishMarket"); if(!sel)return;
+ const old=sel.value;
+ sel.innerHTML='<option value="">Selecione onde fez a compra…</option>'+
+   Object.entries(markets).map(([id,m])=>`<option value="${id}">${esc(m.nome)}</option>`).join("");
+ if(markets[old])sel.value=old;
+}
+function renderMarketPurchases(){
+ const root=document.querySelector("#marketPurchases");if(!root)return;root.innerHTML="";
+ const all=Object.entries(marketPurchases).sort((a,b)=>(b[1].data||0)-(a[1].data||0));
+ if(!all.length){root.innerHTML='<div class="empty" style="margin-bottom:14px">Nenhuma compra salva por mercado ainda.</div>';return}
+ const grouped={};
+ all.forEach(([id,c])=>{const key=c.mercadoId||"sem";(grouped[key]??=[]).push([id,c])});
+ Object.entries(grouped).forEach(([mid,rows])=>{
+   const box=document.createElement("div");box.className="marketbox market-history-box";
+   const marketName=markets[mid]?.nome||rows[0][1].mercadoNome||"Mercado";
+   const total=rows.reduce((a,[,c])=>a+(Number(c.total)||0),0);
+   box.innerHTML=`<h2>🏪 ${esc(marketName)}</h2><p>${rows.length} compra(s) • Total acumulado: <b>${money(total)}</b></p>`;
+   rows.forEach(([,c])=>{
+     const d=new Date(c.data||Date.now()).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
+     const bought=Object.values(c.itens||{});
+     const div=document.createElement("div");div.className="saved-market-purchase";
+     div.innerHTML=`<div class="saved-market-head"><b>Compra • ${d}</b><strong>${money(c.total)}</strong></div>
+       <div class="saved-market-items">${bought.map(i=>`✓ ${esc(i.nome)} × ${Number(i.quantidade)||1} — ${money(i.subtotal)}`).join("<br>")}</div>`;
+     box.appendChild(div);
+   });
+   root.appendChild(box);
+ });
+}
 function renderMarkets(){
  const root=document.querySelector("#markets"),comp=document.querySelector("#marketComparison");
  if(!root||!comp)return; root.innerHTML=""; comp.innerHTML="";
@@ -168,20 +306,51 @@ function renderMarkets(){
  const valid=ms.map(([mid,m])=>({mid,nome:m.nome,total:totals[mid]})).filter(x=>x.total>0);
  if(valid.length){const best=Math.min(...valid.map(x=>x.total));const box=document.createElement("div");box.className="marketbox";box.innerHTML='<h2>Total por mercado</h2>'+valid.sort((a,b)=>a.total-b.total).map(x=>`<div class="itemfoot"><span class="${x.total===best?"best":""}">${esc(x.nome)}${x.total===best?" • melhor total":""}</span><b>${money(x.total)}</b></div>`).join("");comp.prepend(box)}
 }
-document.querySelector("#addForm").addEventListener("submit",async e=>{e.preventDefault();const inp=document.querySelector("#product"),q=document.querySelector("#qty");const nome=inp.value.trim();if(!nome)return;const quantidade=Math.max(1,Number(q.value)||1);const tipoLista=document.querySelector("#listType").value;await set(push(listRef),{nome,quantidade,preco:0,comprado:false,tipoLista,criadoEm:Date.now()});inp.value="";q.value=1;inp.focus()});
+document.querySelector("#addForm").addEventListener("submit",async e=>{e.preventDefault();const inp=document.querySelector("#product"),q=document.querySelector("#qty");const nome=inp.value.trim();if(!nome)return;const quantidade=Math.max(1,Number(q.value)||1);const tipoLista=document.querySelector("#listType").value;const prioridade=document.querySelector("#newPriority").value;await set(push(listRef),{nome,quantidade,preco:0,comprado:false,tipoLista,prioridade,criadoEm:Date.now(),adicionadoPor:deviceName()});inp.value="";q.value=1;inp.focus()});
 
+function sortPriority(a,b){const rank={high:0,normal:1,low:2};return (rank[a[1].prioridade||"normal"]??1)-(rank[b[1].prioridade||"normal"]??1)||(a[1].criadoEm||0)-(b[1].criadoEm||0)}
+function applyAppearance(){
+ const theme=localStorage.getItem("listaTheme")||"system",accent=localStorage.getItem("listaAccent")||"green";
+ document.documentElement.dataset.theme=theme==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):theme;
+ document.documentElement.dataset.accent=accent;
+ document.querySelector("#themeChoice").value=theme;document.querySelector("#accentChoice").value=accent;
+}
+document.querySelector("#themeChoice").addEventListener("change",e=>{localStorage.setItem("listaTheme",e.target.value);applyAppearance()});
+document.querySelector("#accentChoice").addEventListener("change",e=>{localStorage.setItem("listaAccent",e.target.value);applyAppearance()});
+if(window.matchMedia){matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",applyAppearance)}
+applyAppearance();
+const voiceButton=document.querySelector("#voiceAdd");
+voiceButton.addEventListener("click",()=>{
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SpeechRecognition){alert("O reconhecimento de voz não está disponível neste navegador. Experimente o Chrome no Android, com permissão para o microfone.");return}
+ const recognition=new SpeechRecognition();recognition.lang="pt-BR";recognition.interimResults=false;recognition.maxAlternatives=1;
+ voiceButton.disabled=true;voiceButton.textContent="🔴";
+ recognition.onresult=e=>{
+  let phrase=e.results[0][0].transcript.trim();
+  const words={um:1,uma:1,dois:2,duas:2,tres:3,quatro:4,cinco:5,seis:6,sete:7,oito:8,nove:9,dez:10};
+  phrase=phrase.replace(/^adicionar?\s+/i,"");
+  const match=phrase.match(/^(\d+|um|uma|dois|duas|três|tres|quatro|cinco|seis|sete|oito|nove|dez)\s+(.+)$/i);
+  let qty=1,name=phrase;
+  if(match){qty=Number(match[1])||words[match[1].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")]||1;name=match[2]}
+  document.querySelector("#product").value=name;document.querySelector("#qty").value=qty;
+  document.querySelector("#product").focus();
+ };
+ recognition.onerror=e=>{if(e.error!=="no-speech")alert("Não foi possível reconhecer a voz: "+e.error)};
+ recognition.onend=()=>{voiceButton.disabled=false;voiceButton.textContent="🎙️"};
+ try{recognition.start()}catch(e){voiceButton.disabled=false;voiceButton.textContent="🎙️";alert("Microfone indisponível: "+e.message)}
+});
 function render(){
  const currentPurchaseEl=document.querySelector("#currentPurchaseTotal");
  if(currentPurchaseEl)currentPurchaseEl.textContent=money(totals().spent);
  const grouped={"🛒 Mercado":[],"🥬 Verdureira":[]};
- Object.entries(products).sort((a,b)=>(a[1].criadoEm||0)-(b[1].criadoEm||0)).forEach(([id,i])=>{
+ Object.entries(products).sort(sortPriority).forEach(([id,i])=>{
    if(searchTerm && !norm(i.nome).includes(norm(searchTerm))) return;
    const tipo=listTypes.includes(i.tipoLista)?i.tipoLista:"🛒 Mercado"; grouped[tipo].push([id,i]);
  });
  const root=document.querySelector("#list");root.innerHTML="";
  const renderEntries = activeList==="✅ Comprados"
    ? Object.entries(products).filter(([id,i])=>i.comprado && (!searchTerm || norm(i.nome).includes(norm(searchTerm))))
-       .sort((a,b)=>(a[1].criadoEm||0)-(b[1].criadoEm||0))
+       .sort(sortPriority)
    : grouped[activeList];
 
  for(const tipo of [activeList]){
@@ -196,33 +365,106 @@ function render(){
      const q=Number(i.quantidade)||1,p=Number(i.preco)||0,prev=previousPrice(i),sub=q*p;let hint="Sem preço anterior",cls="";
      if(p>0&&prev>0){const diff=p-prev;if(Math.abs(diff)<.005)hint="Mesmo preço da última compra";else if(diff<0){hint=`↓ ${money(Math.abs(diff))} mais barato`;cls="cheaper"}else{hint=`↑ ${money(diff)} mais caro`;cls="expensive"}}
      const el=document.createElement("article");el.className="item"+(i.comprado?" done":"");el.innerHTML=`
-      <div class="itemtop"><input class="check" type="checkbox" ${i.comprado?"checked":""}><div class="name ${i.comprado?"done":""}">${esc(i.nome)}</div><button class="trash" type="button">✕</button></div>
+      <div class="itemtop"><span class="priority-dot">${i.prioridade==="high"?"⭐":i.prioridade==="low"?"▫️":""}</span><input class="check" type="checkbox" ${i.comprado?"checked":""}><div class="name ${i.comprado?"done":""}">${esc(i.nome)}</div><button class="trash" type="button">✕</button></div>
       <div class="fields"><div class="field"><label>Qtd.</label><input class="qtyedit" type="number" min="1" step="1" value="${q}"></div><div class="field"><label>Preço unitário</label><input class="priceedit" type="number" min="0" step=".01" inputmode="decimal" placeholder="R$ 0,00" value="${p||""}"></div><div class="field categoryfield"><label>Lista</label><select class="listedit">${listTypes.map(c=>`<option ${c===(i.tipoLista||"🛒 Mercado")?"selected":""}>${c}</option>`).join("")}</select></div></div>
-      <div class="itemfoot"><span class="pricehint ${cls}">${hint}</span><span class="subtotal">${money(sub)}</span></div>`;
-     el.querySelector(".check").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{comprado:e.target.checked}));
+      <div class="priority-field"><label>Prioridade</label><select class="priorityedit"><option value="high" ${i.prioridade==="high"?"selected":""}>⭐ Essencial</option><option value="normal" ${!i.prioridade||i.prioridade==="normal"?"selected":""}>Normal</option><option value="low" ${i.prioridade==="low"?"selected":""}>Opcional</option></select></div><div class="edit-by">${esc(i.alteradoPor||i.adicionadoPor||"")}</div><div class="itemfoot"><span class="pricehint ${cls}">${hint}</span><span class="subtotal">${money(sub)}</span></div>`;
+     el.querySelector(".priorityedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{prioridade:e.target.value,alteradoPor:deviceName()}));
+     el.querySelector(".check").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{comprado:e.target.checked,alteradoPor:deviceName()}));
      el.querySelector(".trash").addEventListener("click",()=>{if(confirm("Excluir "+i.nome+"?"))remove(ref(db,"listaCompras/"+id))});
-     el.querySelector(".qtyedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{quantidade:Math.max(1,Number(e.target.value)||1)}));
-     el.querySelector(".priceedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{preco:Math.max(0,Number(e.target.value)||0)}));
+     el.querySelector(".qtyedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{quantidade:Math.max(1,Number(e.target.value)||1),alteradoPor:deviceName()}));
+     el.querySelector(".priceedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{preco:Math.max(0,Number(e.target.value)||0),alteradoPor:deviceName()}));
      el.querySelector(".listedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{tipoLista:e.target.value}));
      sec.appendChild(el);
    }); root.appendChild(sec);
  }
- const t=totals();document.querySelector("#heroTotal").textContent=money(t.total);document.querySelector("#heroBought").textContent=t.bought;document.querySelector("#heroSaved").textContent=money(t.saved);document.querySelector("#heroItems").textContent=t.count;
- document.querySelector("#sTotal").textContent=money(t.total);document.querySelector("#sSpent").textContent=money(t.spent);document.querySelector("#sSaved").textContent=money(t.saved);document.querySelector("#sCount").textContent=`${t.bought}/${t.count}`;renderMarkets();
+ const t=totals(),est=estimateBasket();
+ document.querySelector("#heroTotal").textContent=money(est.estimated);
+ const source=document.querySelector("#estimateSource");
+ if(!est.count)source.textContent="Adicione produtos para calcular a estimativa.";
+ else if(!est.covered)source.textContent="Sem preços anteriores para estimar esta lista.";
+ else source.textContent=`${est.covered} de ${est.count} produtos com preço conhecido`+(est.best?` • Base: compra semelhante de ${new Date(est.best.data).toLocaleDateString("pt-BR")}`:" • Base: últimos preços registrados")+(est.covered<est.count?" • Estimativa parcial":"");document.querySelector("#heroBought").textContent=t.bought;document.querySelector("#heroSaved").textContent=money(t.saved);document.querySelector("#heroItems").textContent=t.count;
+ document.querySelector("#sTotal").textContent=money(est.estimated);document.querySelector("#sSpent").textContent=money(t.spent);document.querySelector("#sSaved").textContent=money(t.saved);document.querySelector("#sCount").textContent=`${t.bought}/${t.count}`;renderMarkets();renderInsights();
 }
 
-document.querySelector("#finish").addEventListener("click",async()=>{
- const entries=Object.entries(products);if(!entries.length)return alert("A lista está vazia.");
- if(!confirm("Finalizar esta compra e salvar no histórico?"))return;
- const t=totals(), now=Date.now(), items={};
- for(const [id,i] of entries){const q=Number(i.quantidade)||1,p=knownPrice(i);items[id]={nome:i.nome,quantidade:q,preco:p,comprado:!!i.comprado,tipoLista:i.tipoLista||"🛒 Mercado",subtotal:q*p};
-  if(i.comprado&&p>0){const k=keyName(i.nome),old=priceHistory[k]||{};await update(ref(db,"precosProdutos/"+k),{nome:i.nome,ultimoPreco:p,precoAnterior:Number(old.ultimoPreco)||0,atualizadoEm:now})}
- }
- await set(push(histRef),{data:now,totalLista:t.total,totalGasto:t.spent,economizado:t.saved,itens:items});
- await remove(listRef);alert("Compra salva no histórico!");
+const confirmOverlay=document.querySelector("#confirmOverlay");
+document.querySelector("#finish").addEventListener("click",()=>{
+ const checked=Object.values(products).filter(i=>i.comprado);
+ if(!checked.length)return alert("Marque pelo menos um item como comprado.");
+ document.querySelector("#confirmAmount").textContent="Total comprado: "+money(checked.reduce((n,i)=>n+(Number(i.quantidade)||1)*(Number(i.preco)||0),0));
+ document.querySelector("#newFinishMarket").value="";
+ renderMarketSelect();
+ confirmOverlay.hidden=false;
 });
+document.querySelector("#cancelFinish").addEventListener("click",()=>confirmOverlay.hidden=true);
+document.querySelector("#saveFinish").addEventListener("click",async()=>{
+ const button=document.querySelector("#saveFinish");if(button.disabled)return;
+ const entries=Object.entries(products),checked=entries.filter(([,i])=>i.comprado);
+ if(!checked.length)return alert("Nenhum produto marcado como comprado.");
+ const sel=document.querySelector("#finishMarket");
+ const newName=document.querySelector("#newFinishMarket").value.trim();
+ let mercadoId=sel.value,mercadoNome=markets[mercadoId]?.nome;
+ if(newName){
+   const found=Object.entries(markets).find(([,m])=>norm(m.nome)===norm(newName));
+   if(found){mercadoId=found[0];mercadoNome=found[1].nome}
+   else {const r=push(marketsRef);mercadoId=r.key;mercadoNome=newName}
+ }
+ if(!mercadoNome)return alert("Selecione ou digite o nome do mercado.");
+ button.disabled=true;
+ try{
+   if(newName&&!markets[mercadoId])await set(ref(db,"mercados/"+mercadoId),{nome:mercadoNome,criadoEm:Date.now()});
+   const now=Date.now(),items={},boughtItems={};
+   let spent=0,saved=0,total=0;
+   for(const [id,i] of entries){
+     const q=Number(i.quantidade)||1,p=Number(i.preco)||0,sub=q*p;
+     const item={nome:i.nome,quantidade:q,preco:p,comprado:!!i.comprado,tipoLista:i.tipoLista||"🛒 Mercado",subtotal:sub};
+     items[id]=item;total+=sub;
+     if(i.comprado){
+       spent+=sub;boughtItems[id]=item;
+       if(p>0){const k=keyName(i.nome),old=priceHistory[k]||{};await update(ref(db,"precosProdutos/"+k),{nome:i.nome,ultimoPreco:p,precoAnterior:Number(old.ultimoPreco)||0,atualizadoEm:now})}
+     }else saved+=sub;
+   }
+   const purchaseId=push(histRef).key;
+   const record={data:now,totalLista:total,totalGasto:spent,economizado:saved,mercadoId,mercadoNome,itens:items};
+   await set(ref(db,"historicoCompras/"+purchaseId),record);
+   await set(ref(db,"comprasPorMercado/"+purchaseId),{data:now,mercadoId,mercadoNome,total:spent,itens:boughtItems});
+   // Mantém os produtos, mas inicia uma compra nova sem preços nem marcações.
+   const reset={};
+   for(const [id] of entries){
+     reset[id+"/comprado"]=false;
+     reset[id+"/preco"]=0;
+   }
+   await update(listRef,reset);
+   // Os preços de comparação da compra atual também são reiniciados;
+   // o histórico e os preços anteriores permanecem salvos.
+   await remove(marketPricesRef);
+   activeList="🛒 Mercado";
+   document.querySelectorAll(".list-switch-btn").forEach(b=>b.classList.toggle("active",b.dataset.list===activeList));
+   document.querySelector("#listType").value=activeList;
+   confirmOverlay.hidden=true;
+   alert("Compra salva em "+mercadoNome+"! Produtos desmarcados e preços zerados para a próxima compra.");
+ }catch(e){alert("Não foi possível salvar: "+e.message)}
+ finally{button.disabled=false}
+});
+function renderYearTotals(){
+ const select=document.querySelector("#historyYear"),root=document.querySelector("#yearTotals");
+ if(!select||!root)return;
+ const rows=Object.values(history);
+ const years=[...new Set([...rows.map(h=>new Date(h.data||0).getFullYear()),new Date().getFullYear()])].filter(y=>y>2000).sort((a,b)=>b-a);
+ const old=select.value;
+ select.innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join("");
+ select.value=years.includes(Number(old))?old:String(years[0]);
+ const chosen=Number(select.value),byMarket={};let sum=0,count=0;
+ rows.filter(h=>new Date(h.data||0).getFullYear()===chosen).forEach(h=>{
+   const name=h.mercadoNome||"Mercado não informado",v=Number(h.totalGasto)||0;
+   sum+=v;count++;byMarket[name]=(byMarket[name]||0)+v;
+ });
+ root.innerHTML=`<div class="year-grand">Total em ${chosen}: <strong>${money(sum)}</strong></div><p>${count} compra(s) registrada(s)</p>`+
+ Object.entries(byMarket).sort((a,b)=>b[1]-a[1]).map(([name,value])=>`<div class="year-row"><span>${esc(name)}</span><strong>${money(value)}</strong></div>`).join("");
+}
+document.querySelector("#historyYear").addEventListener("change",()=>{renderYearTotals();renderInsights()});
 
 function renderHistory(){
+ renderYearTotals();renderInsights();
  const root=document.querySelector("#historyList"),rows=Object.entries(history).sort((a,b)=>(b[1].data||0)-(a[1].data||0));root.innerHTML="";
  if(!rows.length){root.innerHTML='<div class="empty">Nenhuma compra finalizada ainda.</div>';return}
  rows.forEach(([id,h])=>{const items=Object.values(h.itens||{}),bought=items.filter(i=>i.comprado);const d=new Date(h.data||Date.now()).toLocaleString("pt-BR",{dateStyle:"medium",timeStyle:"short"});const el=document.createElement("article");el.className="history";el.innerHTML=`<div class="historytop"><div><h3>Compra</h3><div class="date">${d}</div></div><div class="htotal">${money(h.totalGasto)}</div></div><div class="historydetails">${bought.length} comprado(s) • ${items.length-bought.length} não comprado(s) • Não gasto: ${money(h.economizado)}<br>${items.map(i=>`${i.comprado?"✓":"○"} ${esc(i.nome)} × ${i.quantidade} — ${money(i.subtotal)}`).join("<br>")}</div>`;root.appendChild(el)})
