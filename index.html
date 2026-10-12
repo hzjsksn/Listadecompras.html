@@ -70,11 +70,18 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 :root[data-theme="dark"] .list-switch{background:#0f1927}:root[data-theme="dark"] .suggest-btn{background:#273446;color:var(--text);border-color:var(--line)}
 :root[data-theme="dark"] .confirm-dialog{background:var(--card);color:var(--text)}:root[data-theme="dark"] .year-card{background:var(--card)}
 @media(max-width:600px){.add{grid-template-columns:minmax(0,1fr) 80px 42px;gap:7px}.add #newPriority{grid-column:1/2}.add #voiceAdd{grid-column:2/3}.add #qty{grid-column:3/4}.add .addbtn{grid-column:1/-1;min-height:40px}}
+.header-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}.theme-toggle{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer}.header .title{min-width:0}
+.delete-history{display:block;margin-top:12px;padding:10px 13px;border:1px solid #f1b7b7;border-radius:12px;background:#fff1f1;color:#aa2020;font-weight:700;cursor:pointer}.delete-history:disabled{opacity:.5}
+.history-selection-bar{position:sticky;top:8px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;background:var(--card,#fff);border:1px solid var(--line,#ddd);border-radius:14px;margin-bottom:12px}
+.history-selection-bar button{border:0;border-radius:10px;padding:10px;background:#dc2626;color:white;font-weight:700}
+.history-select{display:flex;align-items:center;gap:9px;margin-bottom:10px;font-size:13px;font-weight:600}
+.history-select input{width:19px;height:19px}
+.storage-tip{font-size:12px;line-height:1.5;padding:10px 12px;margin:8px 0;border-radius:12px;background:rgba(22,163,74,.10);border:1px solid rgba(22,163,74,.22)}
 </style>
 </head>
 <body>
 <main class="app">
-  <header class="header"><div class="title"><h1>Nossa Lista 🛒</h1><small>Compras compartilhadas em tempo real</small></div><div id="sync" class="sync">Conectando…</div></header>
+  <header class="header"><div class="title"><h1>Nossa Lista 🛒</h1><small>Compras compartilhadas em tempo real</small></div><div class="header-actions"><div id="sync" class="sync">Conectando…</div><button id="themeToggle" type="button" class="theme-toggle" aria-label="Alternar tema">🌙 Escuro</button></div></header>
 
   <section id="listaPanel" class="panel active">
     <div class="hero">
@@ -85,13 +92,13 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
       <div><small>Total que estou comprando</small><div class="current-purchase-note">Itens marcados como comprados</div></div>
       <strong id="currentPurchaseTotal">R$ 0,00</strong>
     </div>
-    <div class="theme-toolbar"><label for="themeChoice">🎨 Aparência</label><select id="themeChoice" class="input"><option value="light">☀️ Claro</option><option value="dark">🌙 Escuro</option><option value="system">📱 Automático</option></select><label for="accentChoice">Cor</label><select id="accentChoice" class="input"><option value="green">Verde</option><option value="blue">Azul</option><option value="purple">Roxo</option></select></div><div class="insights-card"><h3>🛍️ Compras frequentes</h3><div id="frequentProducts"></div><div class="device-label"><label>Nome de quem usa este aparelho</label><input id="deviceName" class="input" placeholder="Ex.: Gabriel"></div></div><div class="list-switch">
+    <div class="insights-card"><h3>🛍️ Compras frequentes</h3><div id="frequentProducts"></div><div class="device-label"><label>Nome de quem usa este aparelho</label><input id="deviceName" class="input" placeholder="Ex.: Gabriel"></div></div><div class="list-switch">
       <button type="button" class="list-switch-btn active" data-list="🛒 Mercado">🛒 Mercado</button>
       <button type="button" class="list-switch-btn" data-list="🥬 Verdureira">🥬 Verdureira</button>
 <button type="button" class="list-switch-btn" data-list="✅ Comprados">✅ Comprados</button>
     </div>
     <div class="searchbox"><span class="searchicon">🔎</span><input id="searchItem" type="search" placeholder="Pesquisar item na lista…" autocomplete="off"><button id="clearSearch" class="clearsearch" type="button">✕</button></div>
-    <form id="addForm" class="add"><select id="listType" class="input" style="display:none;grid-column:1/-1"><option>🛒 Mercado</option><option>🥬 Verdureira</option></select><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><select id="newPriority" class="input" aria-label="Prioridade"><option value="normal">Normal</option><option value="high">⭐ Essencial</option><option value="low">Opcional</option></select><button type="button" id="voiceAdd" class="voice-btn" title="Adicionar produto por voz">🎙️</button><input id="qty" class="input" type="number" min="1" step="1" value="1" aria-label="Quantidade"><button class="addbtn" aria-label="Adicionar">+</button></form>
+    <form id="addForm" class="add"><select id="listType" class="input" style="display:none;grid-column:1/-1"><option>🛒 Mercado</option><option>🥬 Verdureira</option></select><input id="product" class="input" placeholder="Adicionar produto…" autocomplete="off" required><select id="newPriority" class="input" aria-label="Prioridade"><option value="normal">Normal</option><option value="high">⭐ Essencial</option><option value="low">Opcional</option></select><button type="button" id="voiceAdd" class="voice-btn" title="Adicionar produto por voz">🎙️</button><input id="qty" class="input" type="number" min="0.001" step="any" value="1" aria-label="Quantidade"><select id="newUnit" class="input" aria-label="Unidade de medida" style="display:none"><option value="un">Unidade (un)</option><option value="kg">Quilo (kg)</option></select><button class="addbtn" aria-label="Adicionar">+</button></form>
     <div id="list"></div>
   </section>
 
@@ -119,18 +126,16 @@ button,input,select{font:inherit} button{cursor:pointer}.app{max-width:760px;mar
 
   <section id="historicoPanel" class="panel">
     <div class="year-card"><h3>Gastos por ano</h3><select id="historyYear" class="input"></select><div id="yearTotals"></div></div>
-    <div id="monthlyChart"></div><div id="historyList"></div>
+    <div id="monthlyChart"></div>
+    <div id="historySelectionBar" class="history-selection-bar" style="display:none">
+      <span id="historySelectionCount">0 compras selecionadas</span>
+      <button id="deleteSelectedHistory" type="button">🗑 Excluir selecionadas</button>
+    </div>
+    <div id="historyList"></div>
   </section>
 
   <section id="compararPanel" class="panel">
-    <div class="marketbox">
-      <h2>Comparar mercados 🏪</h2>
-      <p>Cadastre os mercados e informe o preço de cada produto em cada um.</p>
-      <form id="marketForm" class="marketadd"><input id="marketName" class="input" placeholder="Ex.: Mercado A" required><button>Adicionar</button></form>
-      <div id="markets"></div>
-    </div>
     <div id="marketPurchases"></div>
-    <div id="smartMarketComparison"></div><div id="marketComparison"></div>
   </section>
 </main>
 
@@ -236,8 +241,19 @@ function renderInsights(){
  }
 }
 function deviceName(){return localStorage.getItem("nossaListaDeviceName")||"Pessoa não identificada"}
-const nameField=document.querySelector("#deviceName");nameField.value=localStorage.getItem("nossaListaDeviceName")||"";
-nameField.addEventListener("change",()=>localStorage.setItem("nossaListaDeviceName",nameField.value.trim()));
+const nameField=document.querySelector("#deviceName");
+const registrationBox=nameField.closest(".device-label");
+const storedDeviceName=(localStorage.getItem("nossaListaDeviceName")||"").trim();
+nameField.value=storedDeviceName;
+if(storedDeviceName)registrationBox.style.display="none";
+function saveDeviceRegistration(){
+ const name=nameField.value.trim();
+ if(!name)return;
+ localStorage.setItem("nossaListaDeviceName",name);
+ registrationBox.style.display="none";
+}
+nameField.addEventListener("change",saveDeviceRegistration);
+nameField.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();nameField.blur();saveDeviceRegistration()}});
 function previousPrice(item){return Number(priceHistory[keyName(item.nome)]?.ultimoPreco)||0}
 
 onValue(listRef,s=>{products=s.val()||{};document.querySelector("#sync").textContent="● Sincronizado";document.querySelector("#sync").classList.remove("off");render() },()=>{document.querySelector("#sync").textContent="Sem conexão";document.querySelector("#sync").classList.add("off")});
@@ -249,10 +265,6 @@ onValue(marketsRef,s=>{markets=s.val()||{};renderMarketSelect();renderMarkets()}
 onValue(marketPurchasesRef,s=>{marketPurchases=s.val()||{};renderMarketPurchases()});
 onValue(marketPricesRef,s=>{marketPrices=s.val()||{};renderMarkets()});
 
-document.querySelector("#marketForm").addEventListener("submit",async e=>{
- e.preventDefault();const inp=document.querySelector("#marketName"),nome=inp.value.trim();if(!nome)return;
- await set(push(marketsRef),{nome,criadoEm:Date.now(),adicionadoPor:deviceName()});inp.value="";
-});
 
 
 function renderMarketSelect(){
@@ -306,18 +318,46 @@ function renderMarkets(){
  const valid=ms.map(([mid,m])=>({mid,nome:m.nome,total:totals[mid]})).filter(x=>x.total>0);
  if(valid.length){const best=Math.min(...valid.map(x=>x.total));const box=document.createElement("div");box.className="marketbox";box.innerHTML='<h2>Total por mercado</h2>'+valid.sort((a,b)=>a.total-b.total).map(x=>`<div class="itemfoot"><span class="${x.total===best?"best":""}">${esc(x.nome)}${x.total===best?" • melhor total":""}</span><b>${money(x.total)}</b></div>`).join("");comp.prepend(box)}
 }
-document.querySelector("#addForm").addEventListener("submit",async e=>{e.preventDefault();const inp=document.querySelector("#product"),q=document.querySelector("#qty");const nome=inp.value.trim();if(!nome)return;const quantidade=Math.max(1,Number(q.value)||1);const tipoLista=document.querySelector("#listType").value;const prioridade=document.querySelector("#newPriority").value;await set(push(listRef),{nome,quantidade,preco:0,comprado:false,tipoLista,prioridade,criadoEm:Date.now(),adicionadoPor:deviceName()});inp.value="";q.value=1;inp.focus()});
+function storageAdvice(name){
+ const n=norm(name).replace(/[^a-z ]/g," ");
+ const rules=[
+  {words:["morango","framboesa","amora","mirtilo"],place:"Geladeira",days:"2 a 5 dias",tip:"Mantenha seco e lave somente antes de consumir."},
+  {words:["cenoura"],place:"Geladeira",days:"2 a 4 semanas",tip:"Guarde na gaveta de legumes, sem as folhas."},
+  {words:["alface","rucula","espinafre","couve"],place:"Geladeira",days:"3 a 7 dias",tip:"Guarde bem seco em recipiente ou saco ventilado."},
+  {words:["tomate"],place:"Fora da geladeira enquanto amadurece",days:"3 a 7 dias",tip:"Depois de maduro, refrigere para durar mais; deixe voltar à temperatura ambiente antes de comer."},
+  {words:["banana"],place:"Fora da geladeira enquanto amadurece",days:"2 a 7 dias",tip:"Após amadurecer, pode refrigerar; a casca escurece."},
+  {words:["batata","batata doce","cebola","alho"],place:"Fora da geladeira",days:"2 a 4 semanas",tip:"Local fresco, seco e ventilado; separe batatas das cebolas."},
+  {words:["maca","pera","uva"],place:"Geladeira",days:"1 a 4 semanas",tip:"Na gaveta de frutas, sem lavar antes de guardar."},
+  {words:["abacate","manga","mamao","pessego"],place:"Fora até amadurecer; depois geladeira",days:"2 a 5 dias depois de maduro",tip:"Refrigere quando atingir o ponto de consumo."},
+  {words:["brocolis","couve flor","pepino","abobrinha","pimentao"],place:"Geladeira",days:"3 a 7 dias",tip:"Na gaveta de legumes, sem excesso de umidade."},
+  {words:["limao","laranja","tangerina"],place:"Geladeira para conservar por mais tempo",days:"2 a 4 semanas",tip:"Fora da geladeira duram menos; evite umidade."}
+ ];
+ return rules.find(r=>r.words.some(w=>n.split(/\s+/).includes(w)))||null;
+}
+function updateUnitSelector(){
+ const isVeg=document.querySelector("#listType").value==="🥬 Verdureira";
+ const el=document.querySelector("#newUnit");el.style.display=isVeg?"":"none";
+ document.querySelector("#qty").step=isVeg?"any":"1";
+}
+document.querySelectorAll(".list-switch-btn").forEach(b=>b.addEventListener("click",()=>setTimeout(updateUnitSelector,0)));
+updateUnitSelector();
+document.querySelector("#addForm").addEventListener("submit",async e=>{e.preventDefault();const inp=document.querySelector("#product"),q=document.querySelector("#qty");const nome=inp.value.trim();if(!nome)return;const quantidade=Math.max(0.001,Number(q.value)||1);const unidade=document.querySelector("#newUnit").value;const tipoLista=document.querySelector("#listType").value;const prioridade=document.querySelector("#newPriority").value;await set(push(listRef),{nome,quantidade,unidade:tipoLista==="🥬 Verdureira"?unidade:"un",preco:0,comprado:false,tipoLista,prioridade,criadoEm:Date.now(),adicionadoPor:deviceName()});inp.value="";q.value=1;inp.focus()});
 
 function sortPriority(a,b){const rank={high:0,normal:1,low:2};return (rank[a[1].prioridade||"normal"]??1)-(rank[b[1].prioridade||"normal"]??1)||(a[1].criadoEm||0)-(b[1].criadoEm||0)}
 function applyAppearance(){
- const theme=localStorage.getItem("listaTheme")||"system",accent=localStorage.getItem("listaAccent")||"green";
- document.documentElement.dataset.theme=theme==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):theme;
- document.documentElement.dataset.accent=accent;
- document.querySelector("#themeChoice").value=theme;document.querySelector("#accentChoice").value=accent;
+ const theme=localStorage.getItem("listaTheme")||"system";
+ const dark=theme==="system"?matchMedia("(prefers-color-scheme: dark)").matches:theme==="dark";
+ document.documentElement.dataset.theme=dark?"dark":"light";
+ document.documentElement.dataset.accent=localStorage.getItem("listaAccent")||"green";
+ const btn=document.querySelector("#themeToggle");
+ btn.textContent=dark?"☀️ Claro":"🌙 Escuro";
+ btn.setAttribute("aria-label",dark?"Ativar tema claro":"Ativar tema escuro");
 }
-document.querySelector("#themeChoice").addEventListener("change",e=>{localStorage.setItem("listaTheme",e.target.value);applyAppearance()});
-document.querySelector("#accentChoice").addEventListener("change",e=>{localStorage.setItem("listaAccent",e.target.value);applyAppearance()});
-if(window.matchMedia){matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",applyAppearance)}
+document.querySelector("#themeToggle").addEventListener("click",()=>{
+ const isDark=document.documentElement.dataset.theme==="dark";
+ localStorage.setItem("listaTheme",isDark?"light":"dark");applyAppearance();
+});
+if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",applyAppearance);
 applyAppearance();
 const voiceButton=document.querySelector("#voiceAdd");
 voiceButton.addEventListener("click",()=>{
@@ -362,16 +402,17 @@ function render(){
    sec.innerHTML=`<div class="cathead"><h2>${tipo}</h2><span>${purchasedQty} item(ns)</span></div>${tipo==="✅ Comprados"?`<div class="purchased-total"><small>Total comprado</small><strong>${money(purchasedTotal)}</strong></div>`:""}`;
    if(!entries.length){const e=document.createElement("div");e.className="empty";e.textContent=searchTerm?"Nenhum item encontrado.":(tipo==="✅ Comprados"?"Nenhum item marcado como comprado.":tipo==="🥬 Verdureira"?"Nenhum item na lista da verdureira.":"Nenhum item na lista do mercado.");sec.appendChild(e)}
    entries.forEach(([id,i])=>{
-     const q=Number(i.quantidade)||1,p=Number(i.preco)||0,prev=previousPrice(i),sub=q*p;let hint="Sem preço anterior",cls="";
+     const q=Number(i.quantidade)||1,p=Number(i.preco)||0,prev=previousPrice(i),sub=q*p;const unit=i.unidade==="kg"?"kg":"un";const advice=(i.tipoLista==="🥬 Verdureira")?storageAdvice(i.nome):null;let hint="Sem preço anterior",cls="";
      if(p>0&&prev>0){const diff=p-prev;if(Math.abs(diff)<.005)hint="Mesmo preço da última compra";else if(diff<0){hint=`↓ ${money(Math.abs(diff))} mais barato`;cls="cheaper"}else{hint=`↑ ${money(diff)} mais caro`;cls="expensive"}}
      const el=document.createElement("article");el.className="item"+(i.comprado?" done":"");el.innerHTML=`
       <div class="itemtop"><span class="priority-dot">${i.prioridade==="high"?"⭐":i.prioridade==="low"?"▫️":""}</span><input class="check" type="checkbox" ${i.comprado?"checked":""}><div class="name ${i.comprado?"done":""}">${esc(i.nome)}</div><button class="trash" type="button">✕</button></div>
-      <div class="fields"><div class="field"><label>Qtd.</label><input class="qtyedit" type="number" min="1" step="1" value="${q}"></div><div class="field"><label>Preço unitário</label><input class="priceedit" type="number" min="0" step=".01" inputmode="decimal" placeholder="R$ 0,00" value="${p||""}"></div><div class="field categoryfield"><label>Lista</label><select class="listedit">${listTypes.map(c=>`<option ${c===(i.tipoLista||"🛒 Mercado")?"selected":""}>${c}</option>`).join("")}</select></div></div>
+      ${i.tipoLista==="🥬 Verdureira"?`<div class="storage-tip">🥬 ${advice?`<b>${advice.place}</b> • Duração aproximada: ${advice.days}<br>${advice.tip}`:"Conservação: produto não identificado. Consulte a orientação de armazenamento específica."}</div>`:""}<div class="fields"><div class="field"><label>Qtd.</label><input class="qtyedit" type="number" min="0.001" step="${unit==="kg"?"any":"1"}" value="${q}"></div><div class="field"><label>Preço por ${unit==="kg"?"kg":"unidade"}</label><input class="priceedit" type="number" min="0" step=".01" inputmode="decimal" placeholder="R$ 0,00" value="${p||""}"></div><div class="field"><label>Medida</label><select class="unitedit"><option value="un" ${unit==="un"?"selected":""}>Unidade</option><option value="kg" ${unit==="kg"?"selected":""}>Quilo</option></select></div><div class="field categoryfield"><label>Lista</label><select class="listedit">${listTypes.map(c=>`<option ${c===(i.tipoLista||"🛒 Mercado")?"selected":""}>${c}</option>`).join("")}</select></div></div>
       <div class="priority-field"><label>Prioridade</label><select class="priorityedit"><option value="high" ${i.prioridade==="high"?"selected":""}>⭐ Essencial</option><option value="normal" ${!i.prioridade||i.prioridade==="normal"?"selected":""}>Normal</option><option value="low" ${i.prioridade==="low"?"selected":""}>Opcional</option></select></div><div class="edit-by">${esc(i.alteradoPor||i.adicionadoPor||"")}</div><div class="itemfoot"><span class="pricehint ${cls}">${hint}</span><span class="subtotal">${money(sub)}</span></div>`;
      el.querySelector(".priorityedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{prioridade:e.target.value,alteradoPor:deviceName()}));
      el.querySelector(".check").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{comprado:e.target.checked,alteradoPor:deviceName()}));
      el.querySelector(".trash").addEventListener("click",()=>{if(confirm("Excluir "+i.nome+"?"))remove(ref(db,"listaCompras/"+id))});
-     el.querySelector(".qtyedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{quantidade:Math.max(1,Number(e.target.value)||1),alteradoPor:deviceName()}));
+     el.querySelector(".unitedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{unidade:e.target.value,alteradoPor:deviceName()}));
+     el.querySelector(".qtyedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{quantidade:Math.max(0.001,Number(e.target.value)||1),alteradoPor:deviceName()}));
      el.querySelector(".priceedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{preco:Math.max(0,Number(e.target.value)||0),alteradoPor:deviceName()}));
      el.querySelector(".listedit").addEventListener("change",e=>update(ref(db,"listaCompras/"+id),{tipoLista:e.target.value}));
      sec.appendChild(el);
@@ -410,13 +451,16 @@ document.querySelector("#saveFinish").addEventListener("click",async()=>{
  }
  if(!mercadoNome)return alert("Selecione ou digite o nome do mercado.");
  button.disabled=true;
+ button.textContent="Salvando…";
+ confirmOverlay.hidden=true;
+ document.querySelector("#finish").disabled=true;
  try{
    if(newName&&!markets[mercadoId])await set(ref(db,"mercados/"+mercadoId),{nome:mercadoNome,criadoEm:Date.now()});
    const now=Date.now(),items={},boughtItems={};
    let spent=0,saved=0,total=0;
    for(const [id,i] of entries){
      const q=Number(i.quantidade)||1,p=Number(i.preco)||0,sub=q*p;
-     const item={nome:i.nome,quantidade:q,preco:p,comprado:!!i.comprado,tipoLista:i.tipoLista||"🛒 Mercado",subtotal:sub};
+     const item={nome:i.nome,quantidade:q,unidade:i.unidade||"un",preco:p,comprado:!!i.comprado,tipoLista:i.tipoLista||"🛒 Mercado",subtotal:sub};
      items[id]=item;total+=sub;
      if(i.comprado){
        spent+=sub;boughtItems[id]=item;
@@ -442,8 +486,14 @@ document.querySelector("#saveFinish").addEventListener("click",async()=>{
    document.querySelector("#listType").value=activeList;
    confirmOverlay.hidden=true;
    alert("Compra salva em "+mercadoNome+"! Produtos desmarcados e preços zerados para a próxima compra.");
- }catch(e){alert("Não foi possível salvar: "+e.message)}
- finally{button.disabled=false}
+ }catch(e){
+   confirmOverlay.hidden=false;
+   alert("Não foi possível concluir o salvamento: "+e.message+". Verifique o histórico antes de tentar novamente.");
+ }finally{
+   button.disabled=false;
+   button.textContent="Salvar no histórico";
+   document.querySelector("#finish").disabled=false;
+ }
 });
 function renderYearTotals(){
  const select=document.querySelector("#historyYear"),root=document.querySelector("#yearTotals");
@@ -463,11 +513,45 @@ function renderYearTotals(){
 }
 document.querySelector("#historyYear").addEventListener("change",()=>{renderYearTotals();renderInsights()});
 
+const selectedHistory=new Set();
+function refreshHistorySelection(){
+ const bar=document.querySelector("#historySelectionBar");
+ const count=document.querySelector("#historySelectionCount");
+ const valid=[...selectedHistory].filter(id=>Object.prototype.hasOwnProperty.call(history,id));
+ selectedHistory.clear();valid.forEach(id=>selectedHistory.add(id));
+ bar.style.display=selectedHistory.size?"flex":"none";
+ count.textContent=selectedHistory.size+" compra(s) selecionada(s)";
+}
+document.querySelector("#deleteSelectedHistory").addEventListener("click",async()=>{
+ const ids=[...selectedHistory];if(!ids.length)return;
+ if(!confirm("Excluir "+ids.length+" compra(s) selecionada(s)? Essa ação não pode ser desfeita."))return;
+ const btn=document.querySelector("#deleteSelectedHistory");btn.disabled=true;
+ try{
+  for(const id of ids){
+   await Promise.all([remove(ref(db,"historicoCompras/"+id)),remove(ref(db,"comprasPorMercado/"+id))]);
+   selectedHistory.delete(id);
+  }
+  refreshHistorySelection();
+ }catch(err){alert("Erro ao excluir: "+err.message)}
+ finally{btn.disabled=false}
+});
 function renderHistory(){
  renderYearTotals();renderInsights();
  const root=document.querySelector("#historyList"),rows=Object.entries(history).sort((a,b)=>(b[1].data||0)-(a[1].data||0));root.innerHTML="";
+ refreshHistorySelection();
  if(!rows.length){root.innerHTML='<div class="empty">Nenhuma compra finalizada ainda.</div>';return}
- rows.forEach(([id,h])=>{const items=Object.values(h.itens||{}),bought=items.filter(i=>i.comprado);const d=new Date(h.data||Date.now()).toLocaleString("pt-BR",{dateStyle:"medium",timeStyle:"short"});const el=document.createElement("article");el.className="history";el.innerHTML=`<div class="historytop"><div><h3>Compra</h3><div class="date">${d}</div></div><div class="htotal">${money(h.totalGasto)}</div></div><div class="historydetails">${bought.length} comprado(s) • ${items.length-bought.length} não comprado(s) • Não gasto: ${money(h.economizado)}<br>${items.map(i=>`${i.comprado?"✓":"○"} ${esc(i.nome)} × ${i.quantidade} — ${money(i.subtotal)}`).join("<br>")}</div>`;root.appendChild(el)})
+ rows.forEach(([id,h])=>{const items=Object.values(h.itens||{}),bought=items.filter(i=>i.comprado);const d=new Date(h.data||Date.now()).toLocaleString("pt-BR",{dateStyle:"medium",timeStyle:"short"});const el=document.createElement("article");el.className="history";el.innerHTML=`<label class="history-select"><input type="checkbox" class="select-history" ${selectedHistory.has(id)?"checked":""}> Selecionar esta compra</label><div class="historytop"><div><h3>Compra • ${esc(h.mercadoNome||"Mercado não informado")}</h3><div class="date">${d}</div></div><div class="htotal">${money(h.totalGasto)}</div></div><div class="historydetails">${bought.length} comprado(s) • ${items.length-bought.length} não comprado(s) • Não gasto: ${money(h.economizado)}<br>${items.map(i=>`${i.comprado?"✓":"○"} ${esc(i.nome)} × ${i.quantidade} — ${money(i.subtotal)}`).join("<br>")}</div><button class="delete-history" type="button">🗑 Apagar esta compra</button>`;
+ el.querySelector(".select-history").addEventListener("change",e=>{
+  if(e.target.checked)selectedHistory.add(id);else selectedHistory.delete(id);
+  refreshHistorySelection();
+ });
+ el.querySelector(".delete-history").addEventListener("click",async e=>{
+   if(!confirm(`Apagar a compra de ${d} (${money(h.totalGasto)})? Ela será removida do histórico e dos totais anuais. Esta ação não pode ser desfeita.`))return;
+   const btn=e.currentTarget;btn.disabled=true;btn.textContent="Apagando…";
+   try{
+     await Promise.all([remove(ref(db,"historicoCompras/"+id)),remove(ref(db,"comprasPorMercado/"+id))]);
+   }catch(err){btn.disabled=false;btn.textContent="🗑 Apagar esta compra";alert("Erro ao apagar: "+err.message)}
+ });root.appendChild(el)})
 }
 
 
